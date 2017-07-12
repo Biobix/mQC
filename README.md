@@ -1,14 +1,14 @@
-#MappingQC
+# MappingQC
 (stand-alone version)
 
-##Example
+## Example
 
 Main script is mQC.pl and you can run it as in following example:
 perl ./mQC.pl --experiment_name yourexperimentname --samfile yoursamfile.sam --cores 20 --species human --ens_v 86 --ens_db ENS_hsa_86.db --unique N --offset plastid --plastid_bam yourbamfile.bam  --tool_dir mqc_tools
 
 A Galaxy version of mQC is also available. MappingQC is also built in in the PROTEOFORMER pipeline, an automated pipeline for analysis of ribosome profiling sequencing data.
 
-##Input parameters
+## Input parameters
 
   * work_dir: working directory to run the scripts in (default: current working directory)
   * experiment_name: customly chosen experiment name for the mappingQC run (mandatory)
@@ -44,7 +44,7 @@ A Galaxy version of mQC is also available. MappingQC is also built in in the PRO
   * outhtml: custom name for the output HTML file (default: work_dir/mQC_experiment_name.html)
   * outzip: custom name for output ZIP file (default: work_dir/mQC_experiment_name.zip)
 
-##Output
+## Output
 
 MappingQC makes a folder with different plots. The main output file in this folder however is an HTML file that combines all these figures in a nice overview. To transfer your results to another system or location, mappingQC compresses the results folder also to a zip file, so that all results can be unpacked together on the target location.
 Following figures are included in the folder and in the overview HTML file:
@@ -57,7 +57,7 @@ Following figures are included in the folder and in the overview HTML file:
   * Phase - relative position distribution: shows you how the counts are divided over the three reading frames on a metagenic scale over all canonical reading frames. Relative position 0 means metagenically at the beginning of the sequences; relative position 1 means at the metagenic end of the sequences.
   * Triplet identity plots: shows you the reading frame distribution separated for all possible codons. This can pick up if there are any reading frame distribution biases for specific codons. The resulting amino acid or Start/Stop signal of each codon is given as well.
 
-##Dependencies
+## Dependencies
 
 As you can see in the command line, mappingQC relies on a tool directory with some additional tools. These include:
 * metagenic_piecharts.R				An R tool to plot the metagenic piecharts in R
@@ -86,11 +86,11 @@ Furthermore, mappingQC relies on following Python2 modules which have to be inst
 mplot3d is not able to plot 3D barcharts in non-cubic environments and this adapted script will solve this issue.
 
 
-##More information
+## More information
 
 For more information about mappingQC: contact Steven.Verbruggen@UGent.be or Gerben.Menschaert@UGent.be
 
-##Copyright
+## Copyright
 
 Copyright (C) 2017 Verbruggen Steven & Menschaert Gerben
 
