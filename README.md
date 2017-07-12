@@ -1,5 +1,4 @@
-# MappingQC
-(stand-alone version)
+# MappingQC  (stand-alone version)
 
 ## Example
 
