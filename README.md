@@ -5,7 +5,9 @@
 Main script is mQC.pl and you can run it as in following example:
 perl ./mQC.pl --experiment_name yourexperimentname --samfile yoursamfile.sam --cores 20 --species human --ens_v 86 --ens_db ENS_hsa_86.db --unique N --offset plastid --plastid_bam yourbamfile.bam  --tool_dir mqc_tools
 
-A Galaxy version of mQC is also available. MappingQC is also built in in the PROTEOFORMER pipeline, an automated pipeline for analysis of ribosome profiling sequencing data.
+A Galaxy version of mQC is also available.
+
+MappingQC is also built in in the PROTEOFORMER pipeline, an automated pipeline for analysis of ribosome profiling sequencing data: https://github.com/Biobix/proteoformer
 
 ## Input parameters
 
