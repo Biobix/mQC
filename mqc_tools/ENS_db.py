@@ -20,6 +20,7 @@ ARGUMENTS:
                                             fruitfly                    |   drosophila_melanogaster
                                             saccharomyces_cerevisiae    |   yeast
                                             caenorhabditis_elegans      |   c.elegans
+                                            zebrafish                   |   danio_rerio
 
 
 The Ensembl database will be installed in the current directory ( directory where the script is run from )
@@ -90,7 +91,7 @@ os.system('mkdir tmp/ENS')
 # Dictionary for 3letter abbreviation for species
 #
 
-speciesdict = {'human': 'hsa', 'mouse': 'mmu', 'fruitfly': 'dme', 'yeast': 'sce', 'c.elegans': 'cel',
+speciesdict = {'human': 'hsa', 'mouse': 'mmu', 'zebrafish': 'dre', 'fruitfly': 'dme', 'yeast': 'sce', 'c.elegans': 'cel',
                'homo_sapiens': 'hsa', 'mus_musculus': 'mmu', 'drosophila_melanogaster': 'dme',
                'saccharomyces_cerevisiae': 'sce', 'caenorhabditis_elegans': 'cel'};
 
