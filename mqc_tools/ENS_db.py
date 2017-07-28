@@ -183,9 +183,12 @@ elif (species=='caenorhabditis_elegans' or species =="c.elegans"):
         print("supported ensembl versions: from 74 till 88")
         sys.exit()
 elif (species=='danio_rerio' or species =="zebrafish"):
-    if(int(ens_v) >= 74 and int(ens_v) <= 88):
+    if(int(ens_v) >= 74 and int(ens_v) <= 79):
         core='/danio_rerio_core_' + ens_v + '_9.sql.gz'
         download('ftp://ftp.ensembl.org/pub/release-' + ens_v +'/mysql/danio_rerio_core_' + ens_v +'_9/',core)
+    elif(int(ens_v) >=80 and int(ens_v) <= 88):
+        core='/danio_rerio_core_' + ens_v + '_10.sql.gz'
+        download('ftp://ftp.ensembl.org/pub/release-' + ens_v +'/mysql/danio_rerio_core_' + ens_v +'_10/',core)
     else:
         print("ERROR: unsupported ensembl version: " + ens_v)
         print("supported ensembl versions: from 74 till 88")
