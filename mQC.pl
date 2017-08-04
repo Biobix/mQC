@@ -207,7 +207,7 @@ if ($outfolder){
 }
 if ($plotrpftool){
     if ($plotrpftool eq "grouped2D" || $plotrpftool eq "pyplot3D" || $plotrpftool eq "mayavi"){
-        print "RPF phase plotting tool:         : $plotrpftool\n";
+        print "RPF phase plotting tool:                                 : $plotrpftool\n";
     } else {
         die "The plotrpftool option should be 'grouped2D', 'pyplot3D' or 'mayavi'!\n";
     }
