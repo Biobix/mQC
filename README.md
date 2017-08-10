@@ -1,5 +1,7 @@
 # MappingQC  (stand-alone version)
 
+MappingQC is a tool to easily generate some figures which give a nice overview of the quality of the mapping of ribosome profiling data. More specific, it gives an overview of the P site offset calculation, the gene distribution and the metagenic classification. Furthermore, MappingQC does a thorough analysis of the triplet periodicity and the linked triplet phase (typical for ribosome profiling) in the canonical transcript of your data. Especially, the link between the phase distribution and the RPF length, the relative sequence position and the triplet identity are taken into account.
+
 ## Example
 
 Main script is mQC.pl and you can run it as in following example:
@@ -10,7 +12,7 @@ perl ./mQC.pl --experiment_name yourexperimentname --samfile yoursamfile.sam --c
 The stand-alone version of mappingQC (mQC) can be installed from conda:
     conda install mqc
 
-A Galaxy version of mQC is also available.
+A Galaxy version of mQC is also available: http://galaxy.ugent.be
 
 MappingQC is also built in in the PROTEOFORMER pipeline, an automated pipeline for analysis of ribosome profiling sequencing data: https://github.com/Biobix/proteoformer
 
