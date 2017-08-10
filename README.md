@@ -3,7 +3,9 @@
 ## Example
 
 Main script is mQC.pl and you can run it as in following example:
+'''
 perl ./mQC.pl --experiment_name yourexperimentname --samfile yoursamfile.sam --cores 20 --species human --ens_v 86 --ens_db ENS_hsa_86.db --unique N --offset plastid --plastid_bam yourbamfile.bam  --tool_dir mqc_tools
+'''
 
 The stand-alone version of mappingQC (mQC) can be installed from conda:
     conda install mqc
@@ -11,6 +13,25 @@ The stand-alone version of mappingQC (mQC) can be installed from conda:
 A Galaxy version of mQC is also available.
 
 MappingQC is also built in in the PROTEOFORMER pipeline, an automated pipeline for analysis of ribosome profiling sequencing data: https://github.com/Biobix/proteoformer
+
+## Side notes on conda installation
+
+### Set up channels
+
+Before installing mQC, it is important that the installation channels are added and put in the right order. To do so, it is important to add them in the following order:
+'''
+conda config --add channels r
+conda config --add channels defaults
+conda config --add channels conda-forge
+conda config --add channels bioconda
+'''
+
+### Readline package
+
+The R package of conda-forge can give errors in combination with the readline package version 6.2 of the defaults channel. To solve these errors, just update the readline package:
+'''
+conda update readline
+'''
 
 ## Input parameters
 
@@ -88,7 +109,6 @@ Furthermore, mappingQC relies on following Python2 modules which have to be inst
 
 !! For the 3D plot (counts as a function of phase and RPF length), you have to make an adaptation in the Python2 libraries of mplot3d. The default axes3d.py script (that will be installed if you download and install mplot3d, the one that your python2 actually uses!) needs to be replaced by the axes3d.py script you can find at https://github.com/Biobix/proteoformer/tree/master/MappingQC/mqc_tools/site-packages. You also need to delete the axes3d.pyc script!
 mplot3d is not able to plot 3D barcharts in non-cubic environments and this adapted script will solve this issue.
-
 
 ## More information
 
