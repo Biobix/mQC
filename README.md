@@ -89,7 +89,7 @@ As you can see in the command line, mappingQC relies on a tool directory with so
 * quality_plots.R				An R tool to plot the gene distribution quality plots in R
 * mQC.py					A python (Python2) script to plot all the other plots and assemble all the output in an HTML overview file.
 
-MappingQC relies also on SQLite and the sqlite3 command line tool for for fetching annotation information out of its Ensembl database
+MappingQC relies also on SQLite and the sqlite3 command line tool for for fetching annotation information out of its Ensembl database. Furthermore, the Plastid tool (Dunn et al. 2016) should be installed if you want to use it for calculating offsets.
 
 MappingQC relies on following Perl modules which have to be installed on your system:
 * DBI
