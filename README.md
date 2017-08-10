@@ -3,9 +3,9 @@
 ## Example
 
 Main script is mQC.pl and you can run it as in following example:
-'''
+```
 perl ./mQC.pl --experiment_name yourexperimentname --samfile yoursamfile.sam --cores 20 --species human --ens_v 86 --ens_db ENS_hsa_86.db --unique N --offset plastid --plastid_bam yourbamfile.bam  --tool_dir mqc_tools
-'''
+```
 
 The stand-alone version of mappingQC (mQC) can be installed from conda:
     conda install mqc
@@ -19,19 +19,19 @@ MappingQC is also built in in the PROTEOFORMER pipeline, an automated pipeline f
 ### Set up channels
 
 Before installing mQC, it is important that the installation channels are added and put in the right order. To do so, it is important to add them in the following order:
-'''
+```
 conda config --add channels r
 conda config --add channels defaults
 conda config --add channels conda-forge
 conda config --add channels bioconda
-'''
+```
 
 ### Readline package
 
 The R package of conda-forge can give errors in combination with the readline package version 6.2 of the defaults channel. To solve these errors, just update the readline package:
-'''
+```
 conda update readline
-'''
+```
 
 ## Input parameters
 
