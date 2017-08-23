@@ -41,14 +41,14 @@ conda update readline
 
   * work_dir: working directory to run the scripts in (default: current working directory)
   * experiment_name: customly chosen experiment name for the mappingQC run (mandatory)
-  * samfile: path to the SAM file that comes out of the mapping script of PROTEOFORMER (mandatory)
+  * samfile: path to the SAM/BAM file that comes out of the mapping script of PROTEOFORMER (mandatory)
   * cores: the amount of cores to run the script on (integer, default: 5)
   * species: the studied species (mandatory)
   * ens_v: the version of the Ensembl database you want to use
   * tmp: temporary folder for storing temporary files of mappingQC (default: work_dir/tmp)
   * unique: whether to use only the unique alignments.
    Possible options: Y, N (default Y)
-  * mapper: the mapper you used to generate the SAM file (default: STAR)
+  * mapper: the mapper you used to generate the SAM file (STAR/TopHat2/HiSat2, default: STAR)
   * maxmultimap: the maximum amount of multimapped positions used for filtering the reads (default: 16)
   * ens_db: path to the Ensembl SQLite database with annotation info. If you want mappingQC to download the right Ensembl database automatically for you, put in 'get' for this parameter (mandatory)
   * offset: the offset determination method.

@@ -40,14 +40,14 @@ use Cwd;
 
 # nohup perl ./mQC.pl --experiment_name test --samfile untreat.sam --cores 20 --species mouse --ens_db ENS_mmu_86.db --ens_v 86 --offset plastid > nohup_mappingqc.txt &
 
-my($work_dir,$exp_name,$sam,$cores,$species,$version,$tmpfolder,$unique,$mapper,$maxmultimap,$ens_db,$offset_option,$offset_file,$bam,$tool_dir,$plotrpftool,$min_length_plastid,$max_length_plastid,$min_length_gd,$max_length_gd,$outfolder,$outhtml,$outzip,$galaxy);
+my($work_dir,$exp_name,$sam,$original_bam,$cores,$species,$version,$tmpfolder,$unique,$mapper,$maxmultimap,$ens_db,$offset_option,$offset_file,$bam,$tool_dir,$plotrpftool,$min_length_plastid,$max_length_plastid,$min_length_gd,$max_length_gd,$outfolder,$outhtml,$outzip,$galaxy,$galaxysam);
 my $help;
 
 
 GetOptions(
 "work_dir:s" => \$work_dir,                 # The working directory                                         Optional argument (default: CWD)
 "experiment_name=s" => \$exp_name,          # The experiment name                                           Mandatory argument
-"samfile=s"=>\$sam,                         # The samfile to do the analysis on                             Mandatory argument
+"samfile=s"=>\$sam,                         # The samfile/bamfile to do the analysis on                     Mandatory argument
 "cores=i"=>\$cores,                         # The amount of cores to use                                    Optional argument (default: 5)
 "species=s"=>\$species,                     # The species                                                   Mandatory argument (mouse, human, fruitfly, zebrafish)
 "ens_v=i"=>\$version,                       # The Ensembl version                                           Mandatory argument
@@ -74,6 +74,7 @@ GetOptions(
 "outhtml:s" => \$outhtml,                   # The output HTML file                                                      Optional argument (default: workdir/mQC_exp_name.html)
 "outzip:s" => \$outzip,                     # The output zip file                                                       Optional argument (default: workdir/mQC_exp_name.zip)
 "galaxy:s" => \$galaxy,                     # Run through galaxy or not (Y/N)                                           Optional argument (default: N)
+"galaxysam:s" => \$galaxysam,               # Parameter needed for galaxy version                                       Optional argument (default: Y)
 "help" => \$help                            # Help text option
 );
 
@@ -102,8 +103,13 @@ if ($galaxy){
         print "ERROR: galaxy option should be Y or N!\n";
         die;
     }
+    if ($galaxysam ne 'N' && $galaxysam ne 'Y'){
+        print "ERROR: galaxysam option should be Y or N!\n";
+        die;
+    }
 } else {
     $galaxy = 'N';
+    $galaxysam = 'Y';
 }
 
 
@@ -116,11 +122,44 @@ if ($exp_name){
 } else {
     die "ERROR: do not forget the experiment name!\n";
 }
-if ($sam){
-    print "the input sam file                                       : $sam\n";
+
+
+#Check the extension of the input file
+my $ext = "";
+if($sam =~ m/\.([^.]+)$/){
+    $ext = $1;
+    if ($ext eq "sam"){
+        if ($sam){
+            print "the input sam file                                       : $sam\n";
+        } else {
+            die "\nDon't forget to pass the bam/sam file!\n\n";
+        }
+    } elsif ($ext eq "bam"){
+        if ($sam){
+            print "the input bam file                                       : $sam\n";
+            #Convert input bam file to sam format
+            system("samtools view -h ".$sam." > ".$TMP."/input.sam");
+            $original_bam = $sam;
+            $sam = $TMP."/input.sam";
+        } else {
+            die "\nDon't forget to pass the bam/sam file!\n\n";
+        }
+    } elsif ($galaxy eq 'Y' && $galaxysam eq 'Y'){
+        $ext="sam";
+        print "the input sam file                                       : $sam\n";
+    } elsif ($galaxy eq 'Y' && $galaxysam eq 'N'){
+        $ext="bam";
+        print "the input bam file                                       : $sam\n";
+        system("samtools view -h ".$sam." > ".$TMP."/input.sam");
+        $original_bam = $sam;
+        $sam = $TMP."/input.sam";
+    } else {
+        die "The input file should be in bam/sam format!\n\n";
+    }
 } else {
-    die "\nDon't forget to pass the sam file!\n\n";
+    die "Could not match the extension of the input data file $sam !\n\n";
 }
+
 if ($species){
     if ($species eq "human" || $species eq "mouse" || $species eq "fruitfly" || $species eq "zebrafish"){
         print "Species                                                  : $species\n";
@@ -140,8 +179,8 @@ if ($unique){
     print "Consider unique reads:                                   : $unique\n";
 }
 if ($mapper){
-    if ($mapper ne "STAR" && $mapper ne "TopHat2"){
-        die "ERROR: mapper should be 'STAR' or 'TopHat2'";
+    if ($mapper ne "STAR" && $mapper ne "TopHat2" && $mapper ne "HiSat2"){
+        die "ERROR: mapper should be 'STAR' or 'TopHat2' or 'HiSat2'";
     }
     print "Mapper used to generate SAM file:                        : $mapper\n";
 } else {
@@ -445,7 +484,7 @@ if($offset_option eq "plastid"){
         }
     }
 } else {
-    #Standard offset options from Ingolia paper
+    #Standard P site offset options from Ingolia paper (2012) (cfr. suppl methods in that paper)
     if(uc($species) eq 'FRUITFLY'){
         $offset_hash->{25} = 12;
     }
@@ -612,11 +651,16 @@ if((!-e $TMP."/mappingqc/annotation_coding.png") || (!-e $TMP."/mappingqc/annota
 #Run python plotting script
 print "\n\n\n\n";
 print "Run python plotting script\n";
-my $python_command = "python ".$tool_dir."/mQC.py -g ".$galaxy." -s ".$sam." -n ".$exp_name." -o ".$outfolder." -h ".$outhtml." -z ".$outzip." -p \"".$offset_option."\" -e ".$ens_db." -d ".$species." -v ".$version." -u ".$unique." -x ".$plotrpftool;
+if ($ext eq "bam"){
+    $sam = $original_bam;
+}
+my $python_command = "python ".$tool_dir."/mQC.py -g ".$galaxy." -a ".$galaxysam." -t ".$TMP." -s ".$sam." -n ".$exp_name." -o ".$outfolder." -h ".$outhtml." -z ".$outzip." -p \"".$offset_option."\" -e ".$ens_db." -d ".$species." -v ".$version." -u ".$unique." -x ".$plotrpftool;
 if ($offset_option eq "plastid"){
     my $offset_img = $TMP."/plastid/".$exp_name."_p_offsets.png";
     $python_command = $python_command." -i ".$offset_img;
 }
+print "Python command:\n\t";
+print $python_command."\n";
 system($python_command);
 
 
@@ -2125,12 +2169,12 @@ sub split_SAM_per_chr {
         $chr = $mapping_store[2];
         
         #For STAR: flag 255 means that there is only 1 alignment
-        #For TopHat2: Use NH tag
+        #For TopHat2/HiSat2: Use NH tag
         if ($unique eq "Y"){
-            next unless (($mapping_store[4] == 255 && uc($mapper) eq "STAR") || ($line =~ m/NH:i:1\D/ && uc($mapper) eq "TOPHAT2"));
+            next unless (($mapping_store[4] == 255 && uc($mapper) eq "STAR") || ($line =~ m/NH:i:1\D/ && (uc($mapper) eq "TOPHAT2" || uc($mapper) eq "HISAT2")));
         } elsif ($unique eq "N"){
             #Check the amount of unique reads to be sure SAM file does not come from unique mapping
-            if (($mapping_store[4] == 255 && uc($mapper) eq "STAR") || ($line =~ m/NH:i:1\D/ && uc($mapper) eq "TOPHAT2")){
+            if (($mapping_store[4] == 255 && uc($mapper) eq "STAR") || ($line =~ m/NH:i:1\D/ && (uc($mapper) eq "TOPHAT2" || uc($mapper) eq "HISAT2"))){
                 $count_uniq++;
             }
             

@@ -81,6 +81,8 @@ ARGUMENTS
                                                 (mandatory)
     -g | --galaxy                           Run on galaxy or not (Y/N)
                                                 (default N)
+    -a | --galaxysam                        Galaxy parameter (Y/N)
+                                                (default Y)
 
 EXAMPLE
 
@@ -92,9 +94,9 @@ def main():
 
     # Catch command line with getopt
     try:
-        myopts, args = getopt.getopt(sys.argv[1:], "w:s:n:o:h:z:p:i:e:v:u:x:t:d:g:", ["work_dir=", "input_samfile=", \
+        myopts, args = getopt.getopt(sys.argv[1:], "w:s:n:o:h:z:p:i:e:v:u:x:t:d:g:a:", ["work_dir=", "input_samfile=", \
                         "exp_name=","outfolder=", "outhtml=", "outzip=", "plastid_option=", "plastid_img=" ,\
-                        "ensembl_db=", "ensembl_version=", "unique=", "plotrpftool=" , "tmp_folder=", "species=", "galaxy="])
+                        "ensembl_db=", "ensembl_version=", "unique=", "plotrpftool=" , "tmp_folder=", "species=", "galaxy=","galaxysam="])
     except getopt.GetoptError as err:
         print err
         sys.exit()
@@ -133,6 +135,8 @@ def main():
             species = a
         if o in ('-g', '--galaxy'):
             galaxy = a
+        if o in ('-a', '--galaxysam'):
+            galaxysam = a
 
     try:
         workdir
@@ -194,6 +198,10 @@ def main():
         galaxy
     except:
         galaxy = ''
+    try:
+        galaxysam
+    except:
+        galaxysam = ''
 
     # Check for correct arguments and parse
     if galaxy == '':
@@ -201,6 +209,12 @@ def main():
     else:
         if galaxy != 'N' and galaxy != 'Y':
             print "Error: galaxy option should be Y or N!"
+            sys.exit()
+    if galaxysam == '':
+        galaxysam = 'Y'
+    else:
+        if galaxysam != 'N' and galaxysam != 'Y':
+            print "Error: galaxysam option should be Y or N!"
             sys.exit()
     if workdir == '':
         workdir = os.getcwd()
@@ -238,6 +252,8 @@ def main():
                 outzip_short = m.group(1)
             else:
                 print "Could not extract zip file name out of given path ("+outzip+")"
+        else:
+            outzip_short = outzip
     if plastid_option == '':
         plastid_option = 'standard'
     elif plastid_option != 'standard' and plastid_option != 'plastid' and plastid_option != 'from_file':
@@ -280,7 +296,7 @@ def main():
     phase_distr, total_phase_distr, triplet_distr = get_plot_data(tmpfolder)
 
     #Calculate number of alignments out of SAM file
-    tot_maps = maps_out_of_sam(samfile)
+    tot_maps = maps_out_of_sam(samfile, galaxy, galaxysam, tmpfolder)
 
     #Make total phase distribution plot
     outfile = outfolder+"/tot_phase.png"
@@ -608,7 +624,7 @@ def write_out_html(outfile, output_folder, samfile, run_name, totmaps, plastid, 
                 <td>"""+species+"""</td>
             </tr>
             <tr>
-                <td>Input sam file</td>
+                <td>Input sam/bam file</td>
                 <td>"""+samfile+"""</td>
             </tr>
             <tr>
@@ -1162,10 +1178,17 @@ def get_plot_data(tmpfolder):
     return phase_distr, total, triplet_data
 
 ## Get the number of primary (bit flag of 0x100)alignments out of samfile
-def maps_out_of_sam(sam):
+def maps_out_of_sam(sam, galaxy, galaxysam, tmpfolder):
 
     #Init
     tot_maps = 0
+
+    #Convert to sam if input was a bam file
+    ext = sam.rsplit('.',1)[1]
+    if ext=='bam':
+        sam = tmpfolder+"/input.sam"
+    elif galaxy=='Y' and galaxysam=='N':
+        sam = tmpfolder+"/input.sam"
 
     #Use samtools and wc -l for this
     os.system("samtools view -S -F 0x100 "+sam+ " 2> /dev/null | wc -l > count.txt")
