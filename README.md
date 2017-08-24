@@ -62,7 +62,7 @@ conda update readline
   * min_length_gd: minimum RPF length used for gene distributions and metagenic classification (default: 26).
   * max_length_gd: maximum RPF length used for gene distributions and metagenic classification (default: 34).
   * outfolder: the folder to store the output files (default: work_dir/mQC_output)
-  * tool_dir: folder with necessary additional mappingQC tools. More information below in the ‘dependencies’ section. (default: work_dir/mqc_tools)
+  * tool_dir: folder with necessary additional mappingQC tools. More information below in the ‘dependencies’ section. (default: search for the default mQC tool directory location in the active conda environment)
   * plotrpftool: the module that will be used for plotting the RPF-phase figure
    Possible options:
       - grouped2D: use Seaborn to plot a grouped 2D bar chart (default)

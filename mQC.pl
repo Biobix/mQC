@@ -65,7 +65,7 @@ GetOptions(
 "max_length_plastid=i" =>\$max_length_plastid,          # Maximum length for plastid offset gene                        Optional argument (default: 34), only used when offset option equals 'plastid'
 "min_length_gd=i" =>\$min_length_gd,        #Minimum length for gene distribution and metagenic classification          Optional argument (default: 26)
 "max_length_gd=i" =>\$max_length_gd,        #Maximum length for gene distribution and metagenic classification          Optional argument (default: 34)
-"tool_dir:s" => \$tool_dir,                 # The directory with all necessary tools                                    Optional argument (default: CWD/mqc_tools/)
+"tool_dir:s" => \$tool_dir,                 # The directory with all necessary tools                                    Optional argument (default: conda default installation location)
 "plotrpftool:s" => \$plotrpftool,           # The module that will be used for plotting the RPF-phase figure
                                                 #grouped2D: use Seaborn to plot a grouped 2D bar chart (default)
                                                 #pyplot3D: use mplot3d to plot a 3D bar chart (Suffers sometimes from Escher effects)
@@ -221,8 +221,24 @@ if ($assembly eq "GRCh38"){
 if ($tool_dir){
     print "The tool directory is set to                             : $tool_dir\n";
 } else {
-    $tool_dir = $work_dir."/mqc_tools/";
-    print "The tool directory is set to                             : $tool_dir\n";
+    #Get the conda environment location
+    my $env_file = "envs.txt";
+    system("conda info -e > ".$env_file);
+    my $conda_env = "";
+    open(my $fh, "<", $env_file) or die "Could not open conda environments information file!";
+    while(my $line = <$fh>){
+        chomp($line);
+        if($line =~ m/\*\s*(\/.+)$/){
+            $conda_env = $1."/bin/mqc_tools/";
+        }
+    }
+    close($fh);
+    system("rm -rf ".$env_file);
+    if($conda_env eq "" || $conda_env eq "/bin/mqc_tools/"){
+        print "Could not find conda environment for default tool directory allocation!\n";
+        die;
+    }
+    print "The conda mqc tool directory is automatically set to     : $tool_dir\n";
 }
 
 #Check the scripts you need
@@ -2596,14 +2612,14 @@ sub print_help_text {
     --help                  this helpful screen
     --work_dir              working directory to run the scripts in (default: current working directory)
     --experiment_name       customly chosen experiment name for the mappingQC run (mandatory)
-    --samfile               path to the SAM file that comes out of the mapping script of PROTEOFORMER (mandatory)
+    --samfile               path to the SAM/BAM file that comes out of the mapping script of PROTEOFORMER (mandatory)
     --cores                 the amount of cores to run the script on (integer, default: 5)
     --species               the studied species (mandatory)
     --ens_v                 the version of the Ensembl database you want to use
     --tmp                   temporary folder for storing temporary files of mappingQC (default: work_dir/tmp)
     --unique                whether to use only the unique alignments.
     Possible options: Y, N (default Y)
-    --mapper                the mapper you used to generate the SAM file (default: STAR)
+    --mapper                the mapper you used to generate the SAM file (STAR, TopHat2, HiSat2) (default: STAR)
     --maxmultimap           the maximum amount of multimapped positions used for filtering the reads (default: 16)
     --ens_db                path to the Ensembl SQLite database with annotation info. If you want mappingQC to download the right Ensembl database automatically for you, put in 'get' for this parameter (mandatory)
     --offset                the offset determination method.
@@ -2618,7 +2634,7 @@ sub print_help_text {
     --min_length_gd         minimum RPF length used for gene distributions and metagenic classification (default: 26).
     --max_length_gd         maximum RPF length used for gene distributions and metagenic classification (default: 34).
     --outfolder             the folder to store the output files (default: work_dir/mQC_output)
-    --tool_dir              folder with necessary additional mappingQC tools. More information below in the dependencies section. (default: work_dir/mqc_tools)
+    --tool_dir              folder with necessary additional mappingQC tools. More information below in the dependencies section. (default: search for the default tool directory location in the active conda environment)
     --plotrpftool           the module that will be used for plotting the RPF-phase figure
                                 Possible options:
                                 - grouped2D: use Seaborn to plot a grouped 2D bar chart (default)
