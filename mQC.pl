@@ -229,7 +229,7 @@ if ($tool_dir){
     while(my $line = <$fh>){
         chomp($line);
         if($line =~ m/\*\s*(\/.+)$/){
-            $conda_env = $1."/bin/mqc_tools/";
+            $tool_dir = $1."/bin/mqc_tools/";
         }
     }
     close($fh);
