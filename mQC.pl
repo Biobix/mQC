@@ -229,7 +229,7 @@ if ($tool_dir){
     while(my $line = <$fh>){
         chomp($line);
         if($line =~ m/\*\s*(\/.+)$/){
-            $tool_dir = $1."/bin/mqc_tools/";
+            $conda_env = $1;
         }
     }
     close($fh);
@@ -238,6 +238,7 @@ if ($tool_dir){
         print "Could not find conda environment for default tool directory allocation!\n";
         die;
     }
+    $tool_dir = $conda_env."/bin/mqc_tools/";
     print "The conda mqc tool directory is automatically set to     : $tool_dir\n";
 }
 
