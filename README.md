@@ -55,7 +55,7 @@ conda update readline
     Possible options:		
       - plastid: calculate the offsets with Plastid (Dunn et al. 2016)
         The mapping bam file will be needed for Plastid. You can put the path to the BAM file in with the --plastid_bam argument. If you put in '--plastid_bam convert', then mappingQC converts the SAM file argument to a BAM file and uses this one for Plastid. (default: convert)
-        Furthermore, you need to give the minimum and maximum RPRF length for Plastid offset generation in the --min_length_plastid and --max_length_plastid arguments respectively. To have an idea for good values of these offsets, you can look at the length distribution given in the FastQC output (<https://www.bioinformatics.babraham.ac.uk/projects/fastqc/>) (default values: 22 and 34)
+        Furthermore, you need to give the minimum and maximum RPRF length for Plastid offset generation in the --min_length_plastid and --max_length_plastid arguments respectively. To assess an ideal minimum and maximum value, you can use the length distribution given in the FastQC output (<https://www.bioinformatics.babraham.ac.uk/projects/fastqc/>) (default values: 22 and 34)
       - standard: use the standard offsets from the paper of Ingolia et al. (2012) (default option)
       - from_file: use offsets from an input file
         The offsets input file should be given in the —offset_file argument
