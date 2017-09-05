@@ -1354,7 +1354,7 @@ sub metagenic_analysis {
     my $tool_dir = $_[6];
     
     #Get Non coding biotypes out of ensembl
-    my %biotypes = %{get_nPCbiotypes($db_ENS, $us_ENS, $pw_ENS)};
+    my %biotypes = %{get_nPCbiotypes($db_ens, $us_ens, $pw_ens)};
     
     #Open files
     my $out_table1 = $TMP."/mappingqc/annotation_coding.txt";
