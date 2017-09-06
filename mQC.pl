@@ -2359,12 +2359,25 @@ sub get_chrs {
     my $chr;
     #foreach (@chr){
     foreach my $key (keys(%{$chr_sizes})) {
-        if ($species eq "fruitfly"){
+        if (uc($species) eq "FRUITFLY"){
             if($key eq "M"){
                 $chr = "dmel_mitochondrion_genome";
             }else{
                 $chr = $key;
             }
+        } elsif (uc($species) eq "YEAST") {
+            if($key eq "MT"){
+                $chr = "Mito";
+            } else {
+                $chr = $key;
+            }
+        } elsif (uc($species) eq "ZEBRAFISH"){
+            if($key eq "MT"){
+                $chr = "MtDNA";
+            } else {
+                $chr = $key;
+            }
+        }
         }else {
             $chr = $key;
         }
@@ -2427,7 +2440,7 @@ sub downloadChromosomeFasta{
             } else {
                 system("rsync -avq rsync://ftp.ensembl.org/ensembl/pub/release-".$version."/fasta/".lc($spec)."/dna//".$spec.".".$assembly.".".$version.".dna.chromosome.MtDNA.fa.gz ".$TMP."/Chromosomes/MT.fa.gz");
             }
-            system("gunzip ".$TMP."/Chromosomes/MT.fa.gz");  
+            system("gunzip ".$TMP."/Chromosomes/MT.fa.gz");
         } else {
             if ($version>75){
                 system("rsync -avq rsync://ftp.ensembl.org/ensembl/pub/release-".$version."/fasta/".lc($spec)."/dna//".$spec.".".$assembly.".dna.chromosome.MT.fa.gz ".$TMP."/Chromosomes/MT.fa.gz");
