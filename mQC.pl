@@ -161,7 +161,7 @@ if($sam =~ m/\.([^.]+)$/){
 }
 
 if ($species){
-    if ($species eq "human" || $species eq "mouse" || $species eq "fruitfly" || $species eq "zebrafish" || $species eq "yeast"){
+    if (uc($species) eq "HUMAN" || uc($species) eq "MOUSE" || uc($species) eq "FRUITFLY" || uc($species) eq "ZEBRAFISH" || uc($species) eq "YEAST"){
         print "Species                                                  : $species\n";
     } else {
         die "ERROR: species should be 'human', 'mouse', 'zebrafish', 'yeast' or 'fruifly'!";
@@ -189,15 +189,15 @@ if ($mapper){
 }
 
 #Conversion for species terminolo
-my $spec = ($species eq "mouse") ? "Mus_musculus" : ($species eq "human") ? "Homo_sapiens" : ($species eq "zebrafish") ? "Danio_rerio" : ($species eq "yeast") ? "Saccharomyces_cerevisiae" : ($species eq "fruitfly") ? "Drosophila_melanogaster" : "";
-my $spec_short = ($species eq "mouse") ? "mmu" : ($species eq "human") ? "hsa" : ($species eq "zebrafish") ? "dre" : ($species eq "yeast") ? "sce" : ($species eq "fruitfly") ? "dme" : "";
+my $spec = (uc($species) eq "MOUSE") ? "Mus_musculus" : (uc($species) eq "HUMAN") ? "Homo_sapiens" : (uc($species) eq "ZEBRAFISH") ? "Danio_rerio" : (uc($species) eq "YEAST") ? "Saccharomyces_cerevisiae" : (uc($species) eq "FRUITFLY") ? "Drosophila_melanogaster" : "";
+my $spec_short = (uc($species) eq "MOUSE") ? "mmu" : (uc($species) eq "HUMAN") ? "hsa" : (uc($species) eq "ZEBRAFISH") ? "dre" : (uc($species) eq "YEAST") ? "sce" : (uc($species) eq "FRUITFLY") ? "dme" : "";
 #Old mouse assembly = NCBIM37, new one is GRCm38. Old human assembly = GRCh37, the new one is GRCh38
 my $assembly = (uc($species) eq "MOUSE" && $version >= 70 ) ? "GRCm38"
 : (uc($species) eq "MOUSE" && $version < 70 ) ? "NCBIM37"
 : (uc($species) eq "HUMAN" && $version >= 76) ? "GRCh38"
 : (uc($species) eq "HUMAN" && $version < 76) ? "GRCh37"
 : (uc($species) eq "ZEBRAFISH") ? "GRCz10"
-: (uc($species) eq "ARABIDOPSIS") ? "R64-1-1"
+: (uc($species) eq "YEAST") ? "R64-1-1"
 : (uc($species) eq "FRUITFLY" && $version < 79) ? "BDGP5"
 : (uc($species) eq "FRUITFLY" && $version >= 79) ? "BDGP6" : "";
 
