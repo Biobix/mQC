@@ -2406,13 +2406,28 @@ sub downloadChromosomeFasta{
     
     #Download
     if ($chr eq "MT" || $chr eq "M"){
-        if($species eq "fruitfly"){
+        if(uc($species) eq "FRUITFLY"){
             if ($version>75){
                 system("rsync -avq rsync://ftp.ensembl.org/ensembl/pub/release-".$version."/fasta/".lc($spec)."/dna//".$spec.".".$assembly.".dna.chromosome.dmel_mitochondrion_genome.fa.gz ".$TMP."/Chromosomes/M.fa.gz");
             } else {
                 system("rsync -avq rsync://ftp.ensembl.org/ensembl/pub/release-".$version."/fasta/".lc($spec)."/dna//".$spec.".".$assembly.".".$version.".dna.chromosome.dmel_mitochondrion_genome.fa.gz ".$TMP."/Chromosomes/M.fa.gz");
             }
             system("gunzip ".$TMP."/Chromosomes/M.fa.gz");
+            
+        } elsif(uc($species) eq "YEAST"){ #Other name 'Mito' for yeast
+            if ($version>75){
+                system("rsync -avq rsync://ftp.ensembl.org/ensembl/pub/release-".$version."/fasta/".lc($spec)."/dna//".$spec.".".$assembly.".dna.chromosome.Mito.fa.gz ".$TMP."/Chromosomes/MT.fa.gz");
+            } else {
+                system("rsync -avq rsync://ftp.ensembl.org/ensembl/pub/release-".$version."/fasta/".lc($spec)."/dna//".$spec.".".$assembly.".".$version.".dna.chromosome.Mito.fa.gz ".$TMP."/Chromosomes/MT.fa.gz");
+            }
+            system("gunzip ".$TMP."/Chromosomes/MT.fa.gz");
+        } elsif(uc($species) eq "ZEBRAFISH"){ #Other name 'MtDNA' for c elegans
+            if ($version>75){
+                system("rsync -avq rsync://ftp.ensembl.org/ensembl/pub/release-".$version."/fasta/".lc($spec)."/dna//".$spec.".".$assembly.".dna.chromosome.MtDNA.fa.gz ".$TMP."/Chromosomes/MT.fa.gz");
+            } else {
+                system("rsync -avq rsync://ftp.ensembl.org/ensembl/pub/release-".$version."/fasta/".lc($spec)."/dna//".$spec.".".$assembly.".".$version.".dna.chromosome.MtDNA.fa.gz ".$TMP."/Chromosomes/MT.fa.gz");
+            }
+            system("gunzip ".$TMP."/Chromosomes/MT.fa.gz");  
         } else {
             if ($version>75){
                 system("rsync -avq rsync://ftp.ensembl.org/ensembl/pub/release-".$version."/fasta/".lc($spec)."/dna//".$spec.".".$assembly.".dna.chromosome.MT.fa.gz ".$TMP."/Chromosomes/MT.fa.gz");
