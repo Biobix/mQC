@@ -49,7 +49,7 @@ GetOptions(
 "experiment_name=s" => \$exp_name,          # The experiment name                                           Mandatory argument
 "samfile=s"=>\$sam,                         # The samfile/bamfile to do the analysis on                     Mandatory argument
 "cores=i"=>\$cores,                         # The amount of cores to use                                    Optional argument (default: 5)
-"species=s"=>\$species,                     # The species                                                   Mandatory argument (mouse, human, fruitfly, zebrafish)
+"species=s"=>\$species,                     # The species                                                   Mandatory argument (mouse, human, fruitfly, zebrafish, yeast)
 "ens_v=i"=>\$version,                       # The Ensembl version                                           Mandatory argument
 "tmp:s"=>\$tmpfolder,                       # The tmp folder                                                Optional argument (default: CWD/tmp)
 "unique:s"=>\$unique,                       # Consider only unique reads (Y/N)                              Optional argument (default: Y)
@@ -161,10 +161,10 @@ if($sam =~ m/\.([^.]+)$/){
 }
 
 if ($species){
-    if ($species eq "human" || $species eq "mouse" || $species eq "fruitfly" || $species eq "zebrafish"){
+    if ($species eq "human" || $species eq "mouse" || $species eq "fruitfly" || $species eq "zebrafish" || $species eq "yeast"){
         print "Species                                                  : $species\n";
     } else {
-        die "ERROR: species should be 'human', 'mouse', 'zebrafish' or 'fruifly'!";
+        die "ERROR: species should be 'human', 'mouse', 'zebrafish', 'yeast' or 'fruifly'!";
     }
 } else {
     die "Do not forget the species argument!";
@@ -189,15 +189,15 @@ if ($mapper){
 }
 
 #Conversion for species terminolo
-my $spec = ($species eq "mouse") ? "Mus_musculus" : ($species eq "human") ? "Homo_sapiens" : ($species eq "zebrafish") ? "Danio_rerio" : ($species eq "arabidopsis") ? "Arabidopsis_thaliana" : ($species eq "fruitfly") ? "Drosophila_melanogaster" : "";
-my $spec_short = ($species eq "mouse") ? "mmu" : ($species eq "human") ? "hsa" : ($species eq "zebrafish") ? "dre" : ($species eq "arabidopsis") ? "ath" : ($species eq "fruitfly") ? "dme" : "";
+my $spec = ($species eq "mouse") ? "Mus_musculus" : ($species eq "human") ? "Homo_sapiens" : ($species eq "zebrafish") ? "Danio_rerio" : ($species eq "yeast") ? "Saccharomyces_cerevisiae" : ($species eq "fruitfly") ? "Drosophila_melanogaster" : "";
+my $spec_short = ($species eq "mouse") ? "mmu" : ($species eq "human") ? "hsa" : ($species eq "zebrafish") ? "dre" : ($species eq "yeast") ? "sce" : ($species eq "fruitfly") ? "dme" : "";
 #Old mouse assembly = NCBIM37, new one is GRCm38. Old human assembly = GRCh37, the new one is GRCh38
 my $assembly = (uc($species) eq "MOUSE" && $version >= 70 ) ? "GRCm38"
 : (uc($species) eq "MOUSE" && $version < 70 ) ? "NCBIM37"
 : (uc($species) eq "HUMAN" && $version >= 76) ? "GRCh38"
 : (uc($species) eq "HUMAN" && $version < 76) ? "GRCh37"
 : (uc($species) eq "ZEBRAFISH") ? "GRCz10"
-: (uc($species) eq "ARABIDOPSIS") ? "TAIR10"
+: (uc($species) eq "ARABIDOPSIS") ? "R64-1-1"
 : (uc($species) eq "FRUITFLY" && $version < 79) ? "BDGP5"
 : (uc($species) eq "FRUITFLY" && $version >= 79) ? "BDGP6" : "";
 
@@ -215,6 +215,8 @@ if ($assembly eq "GRCh38"){
     $ucsc = "dm6";
 } elsif ($assembly eq "GRCz10") {
     $ucsc = "danRer10";
+} elsif ($assembly eq "R64-1-1"){
+    $ucsc = "sacCer3";
 }
 
 #Folder arguments
