@@ -2377,8 +2377,7 @@ sub get_chrs {
             } else {
                 $chr = $key;
             }
-        }
-        }else {
+        } else {
             $chr = $key;
         }
         
