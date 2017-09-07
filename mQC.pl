@@ -931,6 +931,21 @@ sub metagenic_analysis_chr{
     my $dbh = DBI->connect('DBI:SQLite:'.$db_ens,$us_ens,$pw_ens,
                     {RaiseError => 1},) || die "Database connection not made: $DBI::errstr";
     
+    #chr nomenclature ens
+    if (uc($species) eq "FRUITFLY"){
+        if($chr eq "M"){
+            $chr = "dmel_mitochondrion_genome";
+        }
+    } elsif (uc($species) eq "YEAST") {
+        if($chr eq "MT"){
+            $chr = "Mito";
+        }
+    } elsif (uc($species) eq "ZEBRAFISH"){
+        if($chr eq "MT"){
+            $chr = "MtDNA";
+        }
+    }
+    
     #Get seq_region_id
     my $query = "SELECT seq_region_id FROM seq_region WHERE coord_system_id = '$coord_system_id' AND name = '$chr'";
     my $execute = $dbh->prepare($query);
@@ -940,6 +955,21 @@ sub metagenic_analysis_chr{
         $seq_region = $result[0];
     }
     $execute->finish();
+    
+    #change back chr nomenclature ens
+    if (uc($species) eq "FRUITFLY"){
+        if($chr eq "dmel_mitochondrion_genome"){
+            $chr = "M";
+        }
+    } elsif (uc($species) eq "YEAST") {
+        if($chr eq "Mito"){
+            $chr = "MT";
+        }
+    } elsif (uc($species) eq "ZEBRAFISH"){
+        if($chr eq "MtDNA"){
+            $chr = "MT";
+        }
+    }
     
     #######
     # Transcripts
@@ -2386,7 +2416,7 @@ sub get_chrs {
         $sth->execute();
         @ids = $sth->fetchrow_array;
         $seq_region_id = $ids[0];
-        $chrs->{$chr}{'seq_region_id'} = $seq_region_id;
+        $chrs->{$key}{'seq_region_id'} = $seq_region_id;
         $sth->finish();
     }
     
@@ -2607,6 +2637,21 @@ sub get_seq_region_id{
     
     #Init
     my $seq_region_id;
+    
+    #chr nomenclature ens
+    if (uc($species) eq "FRUITFLY"){
+        if($chr eq "M"){
+            $chr = "dmel_mitochondrion_genome";
+        }
+    } elsif (uc($species) eq "YEAST") {
+        if($chr eq "MT"){
+            $chr = "Mito";
+        }
+    } elsif (uc($species) eq "ZEBRAFISH"){
+        if($chr eq "MT"){
+            $chr = "MtDNA";
+        }
+    }
     
     my $query = "SELECT seq_region_id FROM seq_region WHERE coord_system_id = '$coord_system_id' AND name = '$chr';";
     my $sth = $dbh->prepare($query);
