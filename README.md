@@ -44,6 +44,13 @@ conda update readline
   * samfile: path to the SAM/BAM file that comes out of the mapping script of PROTEOFORMER (mandatory)
   * cores: the amount of cores to run the script on (integer, default: 5)
   * species: the studied species (mandatory)
+    Already implemented species:
+        - Human (Homo sapiens)
+        - Mouse (Mus musculus)
+        - Fruitfly (drosophila melanogaster)
+        - Zebrafish (Danio rerio)
+        - Yeast (Saccharomyces cerevisiae)
+        - Salmonella enterica subsp. enterica serovar Typhimurium str. SL1344
   * ens_v: the version of the Ensembl database you want to use
   * tmp: temporary folder for storing temporary files of mappingQC (default: work_dir/tmp)
   * unique: whether to use only the unique alignments.
@@ -92,6 +99,7 @@ As you can see in the command line, mappingQC relies on a tool directory with so
 * metagenic_piecharts.R				An R tool to plot the metagenic piecharts in R
 * quality_plots.R				An R tool to plot the gene distribution quality plots in R
 * mQC.py					A python (Python2) script to plot all the other plots and assemble all the output in an HTML overview file.
+* simulate_UTR_for_prokaryotes.py       A script to simulate UTR regions in the genes annotation GTF file. Plastid requires untranslated regions in front of canonical start positions and for prokaryotes, these regions need to be simulated.
 
 MappingQC relies also on SQLite and the sqlite3 command line tool for for fetching annotation information out of its Ensembl database. Furthermore, the Plastid tool (Dunn et al. 2016) should be installed if you want to use it for calculating offsets.
 
