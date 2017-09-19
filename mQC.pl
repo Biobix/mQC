@@ -702,7 +702,7 @@ print "Run python plotting script\n";
 if ($ext eq "bam"){
     $sam = $original_bam;
 }
-my $python_command = "python ".$tool_dir."/mQC.py -g ".$galaxy." -a ".$galaxysam." -t ".$TMP." -s ".$sam." -n ".$exp_name." -o ".$outfolder." -h ".$outhtml." -z ".$outzip." -p \"".$offset_option."\" -e ".$ens_db." -d ".$species." -v ".$version." -u ".$unique." -x ".$plotrpftool;
+my $python_command = "python ".$tool_dir."/mQC.py -g ".$galaxy." -a ".$galaxysam." -y ".$galaxytest." -t ".$TMP." -s ".$sam." -n ".$exp_name." -o ".$outfolder." -h ".$outhtml." -z ".$outzip." -p \"".$offset_option."\" -e ".$ens_db." -d ".$species." -v ".$version." -u ".$unique." -x ".$plotrpftool;
 if ($offset_option eq "plastid"){
     my $offset_img = $TMP."/plastid/".$exp_name."_p_offsets.png";
     $python_command = $python_command." -i ".$offset_img;

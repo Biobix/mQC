@@ -83,6 +83,8 @@ ARGUMENTS
                                                 (default N)
     -a | --galaxysam                        Galaxy parameter (Y/N)
                                                 (default Y)
+    -y | --galaxytest                       Galaxy parameter (Y/N)
+                                                (default N)
 
 EXAMPLE
 
@@ -94,9 +96,9 @@ def main():
 
     # Catch command line with getopt
     try:
-        myopts, args = getopt.getopt(sys.argv[1:], "w:s:n:o:h:z:p:i:e:v:u:x:t:d:g:a:", ["work_dir=", "input_samfile=", \
+        myopts, args = getopt.getopt(sys.argv[1:], "w:s:n:o:h:z:p:i:e:v:u:x:t:d:g:a:y:", ["work_dir=", "input_samfile=", \
                         "exp_name=","outfolder=", "outhtml=", "outzip=", "plastid_option=", "plastid_img=" ,\
-                        "ensembl_db=", "ensembl_version=", "unique=", "plotrpftool=" , "tmp_folder=", "species=", "galaxy=","galaxysam="])
+                        "ensembl_db=", "ensembl_version=", "unique=", "plotrpftool=" , "tmp_folder=", "species=", "galaxy=","galaxysam=","galaxytest="])
     except getopt.GetoptError as err:
         print err
         sys.exit()
@@ -137,6 +139,8 @@ def main():
             galaxy = a
         if o in ('-a', '--galaxysam'):
             galaxysam = a
+        if o in ('-y', '--galaxytest'):
+            galaxytest = a
 
     try:
         workdir
@@ -202,6 +206,10 @@ def main():
         galaxysam
     except:
         galaxysam = ''
+    try:
+        galaxytest
+    except:
+        galaxytest = ''
 
     # Check for correct arguments and parse
     if galaxy == '':
@@ -216,6 +224,8 @@ def main():
         if galaxysam != 'N' and galaxysam != 'Y':
             print "Error: galaxysam option should be Y or N!"
             sys.exit()
+    if galaxytest == '':
+        galaxytest = 'N'
     if workdir == '':
         workdir = os.getcwd()
     if workdir != '':
@@ -336,7 +346,7 @@ def main():
     os.system("cp "+tmp_metagenic_plot_nc+" "+outfolder)
     #Write output HTML file
     write_out_html(outhtml, outfolder, samfile, exp_name, tot_maps, plastid_option, offsets_file, offset_img,\
-                   ens_version, species, ens_db, unique)
+                   ens_version, species, ens_db, unique, galaxytest)
 
     ##Archive and collect output
     #Make output archive
@@ -365,7 +375,7 @@ def main():
 
 ## Write output html file
 def write_out_html(outfile, output_folder, samfile, run_name, totmaps, plastid, offsets_file, offsets_img,\
-                   ensembl_version, species, ens_db, unique):
+                   ensembl_version, species, ens_db, unique, galaxytest):
 
     #Load in offsets
     offsets = pd.read_csv(offsets_file, sep=',', header=None, names=["RPF", "offset"])
@@ -413,6 +423,28 @@ def write_out_html(outfile, output_folder, samfile, run_name, totmaps, plastid, 
                 </table>
                 </p>
                 """
+    
+    #Prepare additional pieces for non-test conditions
+    saminfo = ""
+    ensinfo = ""
+    timeinfo = ""
+    if galaxytest == 'N':
+        saminfo = """<tr>
+                <td>Input sam/bam file</td>
+                <td>"""+samfile+"""</td>
+            </tr>"""
+        ensinfo = """<tr>
+                <td>Ensembl database</td>
+                <td>"""+ens_db+"""</td>
+            </tr>"""
+        timeinfo = """<tr>
+                <td>Analysis date</td>
+                <td>"""+time.strftime("%A %d %b %Y")+"""</td>
+            </tr>
+            <tr>
+                <td>Analysis time</td>
+                <td>"""+time.strftime("%H:%M:%S")+"""</td>
+            </tr>"""
 
     #Structure of html file
     html_string = """<!DOCTYPE html>
@@ -623,18 +655,12 @@ def write_out_html(outfile, output_folder, samfile, run_name, totmaps, plastid, 
                 <td>Species</td>
                 <td>"""+species+"""</td>
             </tr>
-            <tr>
-                <td>Input sam/bam file</td>
-                <td>"""+samfile+"""</td>
-            </tr>
+            """+saminfo+"""
             <tr>
                 <td>Ensembl version</td>
                 <td>"""+ensembl_version+"""</td>
             </tr>
-            <tr>
-                <td>Ensembl database</td>
-                <td>"""+ens_db+"""</td>
-            </tr>
+            """+ensinfo+"""
             <tr>
                 <td>Selected offset source</td>
                 <td>"""+plastid+"""</td>
@@ -647,14 +673,7 @@ def write_out_html(outfile, output_folder, samfile, run_name, totmaps, plastid, 
                 <td>Total mapped genomic sequences</td>
                 <td>"""+'{0:,}'.format(totmaps).replace(',',' ')+"""</td>
             </tr>
-            <tr>
-                <td>Analysis date</td>
-                <td>"""+time.strftime("%A %d %b %Y")+"""</td>
-            </tr>
-            <tr>
-                <td>Analysis time</td>
-                <td>"""+time.strftime("%H:%M:%S")+"""</td>
-            </tr>
+            """+timeinfo+"""
         </table>
         </p>
 
@@ -730,8 +749,7 @@ def write_out_html(outfile, output_folder, samfile, run_name, totmaps, plastid, 
     </div>
 
 </body>
-</html>
-    """
+</html>"""
 
     #Generate html file
     html_file = open(outfile, 'w')
