@@ -6,7 +6,7 @@ MappingQC is a tool to easily generate some figures which give a nice overview o
 
 Main script is mQC.pl and you can run it as in following example:
 ```
-perl ./mQC.pl --experiment_name yourexperimentname --samfile yoursamfile.sam --cores 20 --species human --ens_v 86 --ens_db ENS_hsa_86.db --unique N --offset plastid --plastid_bam yourbamfile.bam  --tool_dir mqc_tools
+mQC.pl --experiment_name yourexperimentname --samfile yoursamfile.sam --cores 20 --species human --ens_v 86 --ens_db ENS_hsa_86.db --unique N --offset plastid --plastid_bam yourbamfile.bam  --tool_dir mqc_tools
 ```
 
 The stand-alone version of mappingQC (mQC) can be installed from conda:
