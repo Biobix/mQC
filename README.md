@@ -14,7 +14,7 @@ The stand-alone version of mappingQC (mQC) can be installed from conda:
 conda install mqc
 ```
 
-A Galaxy version of mQC is also available: http://galaxy.ugent.be
+A Galaxy version of mQC is also available in the Galaxy tool shed: https://toolshed.g2.bx.psu.edu/view/rnateam/mqc/8cd7fafbbdc4  
 
 MappingQC is also built in in the PROTEOFORMER pipeline, an automated pipeline for analysis of ribosome profiling sequencing data: https://github.com/Biobix/proteoformer
 
