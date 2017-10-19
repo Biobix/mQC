@@ -14,7 +14,7 @@ The stand-alone version of mappingQC (mQC) can be installed from conda:
 conda install mqc
 ```
 
-A Galaxy version of mQC is also available in the Galaxy tool shed: https://toolshed.g2.bx.psu.edu/view/rnateam/mqc/8cd7fafbbdc4. An example mapping procedure in Galaxy, consisting of FastQC on the raw data, next the alignment of the data and subsequent FastQC and mQC on the aligned data, can be seen in http://galaxy.ugent.be/u/stevenv/h/gao2014hekmqcdemo.
+A Galaxy version of mQC is also available in the Galaxy tool shed: https://toolshed.g2.bx.psu.edu/view/rnateam/mqc/8cd7fafbbdc4. An example mapping procedure in Galaxy, consisting of FastQC on the raw data, next the alignment of the data with STAR and subsequent FastQC and mQC on the aligned data, can be seen in http://galaxy.ugent.be/u/stevenv/h/gao2014hekmqcdemo.
 
 MappingQC is also built in in the PROTEOFORMER pipeline, an automated pipeline for analysis of ribosome profiling sequencing data: https://github.com/Biobix/proteoformer
 
