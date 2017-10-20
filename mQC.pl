@@ -129,6 +129,8 @@ if (!-e "$TMP") {
 if ($exp_name){
     print "The experiment name                                      : $exp_name\n";
 } else {
+    print_help_text();
+    print "\n\n\n";
     die "ERROR: do not forget the experiment name!\n";
 }
 
@@ -2780,7 +2782,7 @@ sub dbh {
 ### Help text ###
 sub print_help_text {
     
-    my $help_string = "MappingQC (Stand-alone version)
+    my $help_string = "\n\nMappingQC (Stand-alone version)
 
     MappingQC is a tool to easily generate some figures which give a nice overview of the quality of the mapping of ribosome profiling data. More specific, it gives an overview of the P site offset calculation, the gene distribution and the metagenic classification. Furthermore, MappingQC does a thorough analysis of the triplet periodicity and the linked triplet phase (typical for ribosome profiling) in the canonical transcript of your data. Especially, the link between the phase distribution and the RPF length, the relative sequence position and the triplet identity are taken into account.
         
