@@ -280,7 +280,7 @@ if ($plotrpftool){
         print "RPF phase plotting tool:                                 : $plotrpftool\n";
         if ($plotrpftool eq "pyplot3D"){
             #Check the installation of the pyplot 3D mod
-            print "\n\nCheck the installation of pyplot 3D plotting mod\n";
+            print "\n\nChecking the installation of pyplot 3D plotting mod\n";
             if (!-e $tool_dir."/install_pyplot3D_mod.py"){
                 print "Could not find the python pyplot 3D installation module!\n";
                 die;
