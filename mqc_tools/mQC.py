@@ -806,15 +806,17 @@ def phase_position_distr(tmpfolder, outfolder):
     data0 = inputdata[inputdata["phase"]==0]["rel_position"]
     data1 = inputdata[inputdata["phase"] == 1]["rel_position"]
     data2 = inputdata[inputdata["phase"] == 2]["rel_position"]
-
-    #Define 20 bins
-    bins = np.linspace(0,1,21)
+    freq0, bin_edges0 = np.histogram(data0, bins=20, range=(0,1))
+    freq1, bin_edges1 = np.histogram(data1, bins=20, range=(0,1))
+    freq2, bin_edges2 = np.histogram(data2, bins=20, range=(0,1))
 
     #Plot data
     fig, ax = plt.subplots(1, 1)
-    ax.hist([data0,data1,data2], bins, label=["Phase 0", "Phase 1", "Phase 2"])
+    bar1 = ax.bar(bin_edges0[:-1]+0.00625, freq0, 0.0125)
+    bar2 = ax.bar(bin_edges1[:-1]+0.0125+0.00625, freq1, 0.0125)
+    bar3 = ax.bar(bin_edges2[:-1]+0.025+0.00625, freq2, 0.0125)
     ax.set_facecolor("#f2f2f2")
-    lgd = ax.legend(loc='center left', bbox_to_anchor=(1, 0.5))
+    lgd = ax.legend((bar1[0], bar2[0], bar3[0]),('Phase 0','Phase 1', 'Phase 2'), loc='center left', bbox_to_anchor=(1, 0.5))
 
     #Axis info
     plt.ylabel("Counts")
