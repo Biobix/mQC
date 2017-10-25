@@ -2113,7 +2113,8 @@ sub run_plastid{
             system("mv Salmonella_enterica_subsp_enterica_serovar_typhimurium_str_sl1344.".$assembly.".".$version.".gtf.gz ".$TMP."/Genes/genesTmp.gtf.gz");
             system("gunzip ".$TMP."/Genes/genesTmp.gtf.gz");
         } else {
-            system("rsync -avq rsync://ftp.ensembl.org/ensembl/pub/release-".$version."/gtf/".lc($spec)."//".$spec.".".$assembly.".".$version.".gtf.gz ".$TMP."/Genes/genesTmp.gtf.gz");
+            system("wget -q ftp://ftp.ensembl.org/pub/release-".$version."/gtf/".lc($spec)."//".$spec.".".$assembly.".".$version.".gtf.gz");
+            system("mv ".$spec.".".$assembly.".".$version.".gtf.gz ".$TMP."/Genes/genesTmp.gtf.gz");
             system("gunzip ".$TMP."/Genes/genesTmp.gtf.gz");
         }
 
@@ -2514,31 +2515,39 @@ sub downloadChromosomeFasta{
     if ($chr eq "MT" || $chr eq "M"){
         if(uc($species) eq "FRUITFLY"){
             if ($version>75){
-                system("rsync -avq rsync://ftp.ensembl.org/ensembl/pub/release-".$version."/fasta/".lc($spec)."/dna//".$spec.".".$assembly.".dna.chromosome.dmel_mitochondrion_genome.fa.gz ".$TMP."/Chromosomes/M.fa.gz");
+                system("wget -q ftp://ftp.ensembl.org/pub/release-".$version."/fasta/".lc($spec)."/dna//".$spec.".".$assembly.".dna.chromosome.dmel_mitochondrion_genome.fa.gz");
+                system("mv ".$spec.".".$assembly.".dna.chromosome.dmel_mitochondrion_genome.fa.gz ".$TMP."/Chromosomes/M.fa.gz");
             } else {
-                system("rsync -avq rsync://ftp.ensembl.org/ensembl/pub/release-".$version."/fasta/".lc($spec)."/dna//".$spec.".".$assembly.".".$version.".dna.chromosome.dmel_mitochondrion_genome.fa.gz ".$TMP."/Chromosomes/M.fa.gz");
+                system("wget -q ftp://ftp.ensembl.org/pub/release-".$version."/fasta/".lc($spec)."/dna//".$spec.".".$assembly.".".$version.".dna.chromosome.dmel_mitochondrion_genome.fa.gz");
+                system("mv ".$spec.".".$assembly.".".$version.".dna.chromosome.dmel_mitochondrion_genome.fa.gz ".$TMP."/Chromosomes/M.fa.gz");
             }
             system("gunzip ".$TMP."/Chromosomes/M.fa.gz");
             
         } elsif(uc($species) eq "YEAST"){ #Other name 'Mito' for yeast
             if ($version>75){
-                system("rsync -avq rsync://ftp.ensembl.org/ensembl/pub/release-".$version."/fasta/".lc($spec)."/dna//".$spec.".".$assembly.".dna.chromosome.Mito.fa.gz ".$TMP."/Chromosomes/MT.fa.gz");
+                system("wget -q ftp://ftp.ensembl.org/pub/release-".$version."/fasta/".lc($spec)."/dna//".$spec.".".$assembly.".dna.chromosome.Mito.fa.gz");
+                system("mv ".$spec.".".$assembly.".dna.chromosome.Mito.fa.gz ".$TMP."/Chromosomes/MT.fa.gz");
             } else {
-                system("rsync -avq rsync://ftp.ensembl.org/ensembl/pub/release-".$version."/fasta/".lc($spec)."/dna//".$spec.".".$assembly.".".$version.".dna.chromosome.Mito.fa.gz ".$TMP."/Chromosomes/MT.fa.gz");
+                system("wget -q ftp://ftp.ensembl.org/pub/release-".$version."/fasta/".lc($spec)."/dna//".$spec.".".$assembly.".".$version.".dna.chromosome.Mito.fa.gz");
+                system("mv ".$spec.".".$assembly.".".$version.".dna.chromosome.Mito.fa.gz ".$TMP."/Chromosomes/MT.fa.gz");
             }
             system("gunzip ".$TMP."/Chromosomes/MT.fa.gz");
         } elsif(uc($species) eq "ZEBRAFISH"){ #Other name 'MtDNA' for c elegans
             if ($version>75){
-                system("rsync -avq rsync://ftp.ensembl.org/ensembl/pub/release-".$version."/fasta/".lc($spec)."/dna//".$spec.".".$assembly.".dna.chromosome.MtDNA.fa.gz ".$TMP."/Chromosomes/MT.fa.gz");
+                system("wget -q ftp://ftp.ensembl.org/pub/release-".$version."/fasta/".lc($spec)."/dna//".$spec.".".$assembly.".dna.chromosome.MtDNA.fa.gz");
+                system("mv ".$spec.".".$assembly.".dna.chromosome.MtDNA.fa.gz ".$TMP."/Chromosomes/MT.fa.gz");
             } else {
-                system("rsync -avq rsync://ftp.ensembl.org/ensembl/pub/release-".$version."/fasta/".lc($spec)."/dna//".$spec.".".$assembly.".".$version.".dna.chromosome.MtDNA.fa.gz ".$TMP."/Chromosomes/MT.fa.gz");
+                system("wget -q ftp://ftp.ensembl.org/pub/release-".$version."/fasta/".lc($spec)."/dna//".$spec.".".$assembly.".".$version.".dna.chromosome.MtDNA.fa.gz");
+                system("mv ".$spec.".".$assembly.".".$version.".dna.chromosome.MtDNA.fa.gz ".$TMP."/Chromosomes/MT.fa.gz");
             }
             system("gunzip ".$TMP."/Chromosomes/MT.fa.gz");
         } else {
             if ($version>75){
-                system("rsync -avq rsync://ftp.ensembl.org/ensembl/pub/release-".$version."/fasta/".lc($spec)."/dna//".$spec.".".$assembly.".dna.chromosome.MT.fa.gz ".$TMP."/Chromosomes/MT.fa.gz");
+                system("wget -q ftp://ftp.ensembl.org/pub/release-".$version."/fasta/".lc($spec)."/dna//".$spec.".".$assembly.".dna.chromosome.MT.fa.gz");
+                system("mv ".$spec.".".$assembly.".dna.chromosome.MT.fa.gz ".$TMP."/Chromosomes/MT.fa.gz");
             } else {
-                system("rsync -avq rsync://ftp.ensembl.org/ensembl/pub/release-".$version."/fasta/".lc($spec)."/dna//".$spec.".".$assembly.".".$version.".dna.chromosome.MT.fa.gz ".$TMP."/Chromosomes/MT.fa.gz");
+                system("wget -q ftp://ftp.ensembl.org/pub/release-".$version."/fasta/".lc($spec)."/dna//".$spec.".".$assembly.".".$version.".dna.chromosome.MT.fa.gz");
+                system("mv ".$spec.".".$assembly.".".$version.".dna.chromosome.MT.fa.gz ".$TMP."/Chromosomes/MT.fa.gz");
             }
             system("gunzip ".$TMP."/Chromosomes/MT.fa.gz");
         }
@@ -2549,9 +2558,11 @@ sub downloadChromosomeFasta{
             system("mv Salmonella_enterica_subsp_enterica_serovar_typhimurium_str_sl1344.".$assembly.".dna.chromosome.".$chr.".fa ".$TMP."/Chromosomes/".$chr.".fa");
         } else {
             if ($version>75){
-                system("rsync -avq rsync://ftp.ensembl.org/ensembl/pub/release-".$version."/fasta/".lc($spec)."/dna//".$spec.".".$assembly.".dna.chromosome.".$chr.".fa.gz ".$TMP."/Chromosomes/".$chr.".fa.gz");
+                system("wget -q ftp://ftp.ensembl.org/pub/release-".$version."/fasta/".lc($spec)."/dna//".$spec.".".$assembly.".dna.chromosome.".$chr.".fa.gz");
+                system("mv ".$spec.".".$assembly.".dna.chromosome.".$chr.".fa.gz ".$TMP."/Chromosomes/".$chr.".fa.gz");
             } else {
-                system("rsync -avq rsync://ftp.ensembl.org/ensembl/pub/release-".$version."/fasta/".lc($spec)."/dna//".$spec.".".$assembly.".".$version.".dna.chromosome.".$chr.".fa.gz ".$TMP."/Chromosomes/".$chr.".fa.gz");
+                system("wget -q ftp://ftp.ensembl.org/ensembl/pub/release-".$version."/fasta/".lc($spec)."/dna//".$spec.".".$assembly.".".$version.".dna.chromosome.".$chr.".fa.gz");
+                system("mv ".$spec.".".$assembly.".".$version.".dna.chromosome.".$chr.".fa.gz ".$TMP."/Chromosomes/".$chr.".fa.gz");
             }
             system("gunzip ".$TMP."/Chromosomes/".$chr.".fa.gz");
         }
