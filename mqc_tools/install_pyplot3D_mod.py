@@ -24,6 +24,6 @@ if found==True:
 else:
 	os.system("mv "+pyfile+" "+backup)
 	os.system("rm -rf "+pycfile)
-	os.system("wget --no-check-certificate https://raw.githubusercontent.com/Biobix/mQC/master/mqc_tools/site-packages/axes3d.py")
+	os.system("wget -q --no-check-certificate https://raw.githubusercontent.com/Biobix/mQC/master/mqc_tools/site-packages/axes3d.py")
 	os.system("mv axes3d.py "+location)
 	print "Axes3d file modified\n"
