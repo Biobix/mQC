@@ -9,16 +9,18 @@ Main script is mQC.pl and you can run it as in following example:
 mQC.pl --experiment_name yourexperimentname --samfile yoursamfile.sam --cores 20 --species human --ens_v 86 --ens_db ENS_hsa_86.db --unique N --offset plastid --plastid_bam yourbamfile.bam  --tool_dir mqc_tools
 ```
 
-The stand-alone version of mappingQC (mQC) can be installed from conda:
+The stand-alone version of mappingQC (mQC) can be installed from Conda:
 ```
 conda install mqc
 ```
+
+More information on Conda can be found on: https://conda.io/docs/user-guide/index.html
 
 A Galaxy version of mQC is also available in the Galaxy tool shed: https://toolshed.g2.bx.psu.edu/view/rnateam/mqc/523dd2a71270. An example mapping procedure in Galaxy, consisting of FastQC on the raw data, next the alignment of the data with STAR and subsequent FastQC and mQC on the aligned data, can be seen in http://galaxy.ugent.be/u/stevenv/h/gao2014hekmqcdemo.
 
 MappingQC is also built in in the PROTEOFORMER pipeline, an automated pipeline for analysis of ribosome profiling sequencing data: https://github.com/Biobix/proteoformer
 
-## Side notes on conda installation
+## Side notes on Conda installation
 
 ### Set up channels
 
