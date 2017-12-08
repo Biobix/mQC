@@ -298,9 +298,11 @@ def main():
     if not os.path.exists(outfolder):
         os.system("mkdir -p " + outfolder)
 
-    # Download biobix image
+    # Download biobix and mappingqc images
     os.system("wget --quiet \"http://www.nxtgnt.ugent.be/images/img/logos/BIOBIX_logo.png\"")
     os.system("mv BIOBIX_logo.png " + outfolder)
+    os.system("wget --no-check-certificate --quiet \"https://github.com/Biobix/mQC/raw/master/mqc_tools/logo_mqc2_whitebg.png\"")
+    os.system("mv logo_mqc2_whitebg.png " + outfolder)
 
     #Get plot data out of results DB
     phase_distr, total_phase_distr, triplet_distr = get_plot_data(tmpfolder)
@@ -525,16 +527,23 @@ def write_out_html(outfile, output_folder, samfile, run_name, totmaps, plastid, 
         #mappingqc{
             font-family: 'Indie Flower', cursive;
             font-size: 44px;
-            padding-left: 10px;
+            padding-left: 120px;
             position: relative;
             z-index: 4;
         }
         #run_name{
-            padding-left: 43px;
-            position: relative;
+            position:relative;
             z-index: 4;
+            display:table;
+            margin:0 auto;
+            margin-top:-50px;
         }
-
+        #mqc_logo{
+            height: 60%;
+            position: absolute;
+            left: 20px;
+            top: 30px;
+        }
         #biobix_logo{
             height:60%;
             position: absolute;
@@ -625,7 +634,8 @@ def write_out_html(outfile, output_folder, samfile, run_name, totmaps, plastid, 
 
 <body>
     <div id="header">
-        <h1><span id="mappingqc">Mapping QC</span><span id="run_name">"""+run_name+"""</span></h1>
+        <img src="logo_mqc2_whitebg.png" alt="mqc_logo" id="mqc_logo">
+        <h1><span id="mappingqc">mappingQC</span><span id="run_name">"""+run_name+"""</span></h1>
         <img src=\"BIOBIX_logo.png\" alt="biobix_logo" id="biobix_logo">
     </div>
 
