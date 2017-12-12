@@ -53,6 +53,7 @@ conda update readline
         - Zebrafish (Danio rerio)
         - Yeast (Saccharomyces cerevisiae)
         - Salmonella enterica subsp. enterica serovar Typhimurium str. SL1344
+        - c.elegans (Caenorhabditis_elegans)
   * ens_v: the version of the Ensembl database you want to use
   * tmp: temporary folder for storing temporary files of mappingQC (default: work_dir/tmp)
   * unique: whether to use only the unique alignments.

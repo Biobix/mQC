@@ -49,7 +49,7 @@ GetOptions(
 "experiment_name=s" => \$exp_name,          # The experiment name                                           Mandatory argument
 "samfile=s"=>\$sam,                         # The samfile/bamfile to do the analysis on                     Mandatory argument
 "cores=i"=>\$cores,                         # The amount of cores to use                                    Optional argument (default: 5)
-"species=s"=>\$species,                     # The species                                                   Mandatory argument (mouse, human, fruitfly, zebrafish, yeast, SL1344)
+"species=s"=>\$species,                     # The species                                                   Mandatory argument (mouse, human, fruitfly, zebrafish, yeast, SL1344, c.elegans)
 "ens_v=i"=>\$version,                       # The Ensembl version                                           Mandatory argument
 "tmp:s"=>\$tmpfolder,                       # The tmp folder                                                Optional argument (default: CWD/tmp)
 "unique:s"=>\$unique,                       # Consider only unique reads (Y/N)                              Optional argument (default: Y)
@@ -172,10 +172,10 @@ if($sam =~ m/\.([^.]+)$/){
 }
 
 if ($species){
-    if (uc($species) eq "HUMAN" || uc($species) eq "MOUSE" || uc($species) eq "FRUITFLY" || uc($species) eq "ZEBRAFISH" || uc($species) eq "YEAST" || uc($species) eq "SL1344"){
+    if (uc($species) eq "HUMAN" || uc($species) eq "MOUSE" || uc($species) eq "FRUITFLY" || uc($species) eq "ZEBRAFISH" || uc($species) eq "YEAST" || uc($species) eq "SL1344" || uc($species) eq "C.ELEGANS"){
         print "Species                                                  : $species\n";
     } else {
-        die "ERROR: species should be 'human', 'mouse', 'zebrafish', 'yeast', 'SL1344' or 'fruifly'!";
+        die "ERROR: species should be 'human', 'mouse', 'zebrafish', 'yeast', 'SL1344', 'c.elegans' or 'fruifly'!";
     }
 } else {
     die "Do not forget the species argument!";
@@ -200,8 +200,8 @@ if ($mapper){
 }
 
 #Conversion for species terminolo
-my $spec = (uc($species) eq "MOUSE") ? "Mus_musculus" : (uc($species) eq "HUMAN") ? "Homo_sapiens" : (uc($species) eq "SL1344") ? "SL1344" : (uc($species) eq "ZEBRAFISH") ? "Danio_rerio" : (uc($species) eq "YEAST") ? "Saccharomyces_cerevisiae" : (uc($species) eq "FRUITFLY") ? "Drosophila_melanogaster" : "";
-my $spec_short = (uc($species) eq "MOUSE") ? "mmu" : (uc($species) eq "HUMAN") ? "hsa" : (uc($species) eq "ZEBRAFISH") ? "dre" : (uc($species) eq "YEAST") ? "sce" : (uc($species) eq "FRUITFLY") ? "dme" : (uc($species) eq "SL1344") ? "sl1344" : "";
+my $spec = (uc($species) eq "MOUSE") ? "Mus_musculus" : (uc($species) eq "HUMAN") ? "Homo_sapiens" : (uc($species) eq "SL1344") ? "SL1344" : uc($species) eq "C.ELEGANS" ? "Caenorhabditis_elegans" : (uc($species) eq "ZEBRAFISH") ? "Danio_rerio" : (uc($species) eq "YEAST") ? "Saccharomyces_cerevisiae" : (uc($species) eq "FRUITFLY") ? "Drosophila_melanogaster" : "";
+my $spec_short = (uc($species) eq "MOUSE") ? "mmu" : (uc($species) eq "HUMAN") ? "hsa" : (uc($species) eq "ZEBRAFISH") ? "dre" : (uc($species) eq "YEAST") ? "sce" : uc($species) eq "C.ELEGANS" ? "cel" : (uc($species) eq "FRUITFLY") ? "dme" : (uc($species) eq "SL1344") ? "sl1344" : "";
 #Old mouse assembly = NCBIM37, new one is GRCm38. Old human assembly = GRCh37, the new one is GRCh38
 my $assembly = (uc($species) eq "MOUSE" && $version >= 70 ) ? "GRCm38"
 : (uc($species) eq "MOUSE" && $version < 70 ) ? "NCBIM37"
@@ -210,6 +210,7 @@ my $assembly = (uc($species) eq "MOUSE" && $version >= 70 ) ? "GRCm38"
 : (uc($species) eq "ZEBRAFISH") ? "GRCz10"
 : (uc($species) eq "SL1344") ? "ASM21085v2"
 : (uc($species) eq "YEAST") ? "R64-1-1"
+: (uc($species) eq "C.ELEGANS") ? "WBcel235"
 : (uc($species) eq "FRUITFLY" && $version < 79) ? "BDGP5"
 : (uc($species) eq "FRUITFLY" && $version >= 79) ? "BDGP6" : "";
 
@@ -227,6 +228,8 @@ if ($assembly eq "GRCh38"){
     $ucsc = "dm6";
 } elsif ($assembly eq "GRCz10") {
     $ucsc = "danRer10";
+} elsif ($assembly eq "WBcel235") {
+    $ucsc = "ce10";
 } elsif ($assembly eq "R64-1-1"){
     $ucsc = "sacCer3";
 }
@@ -2532,7 +2535,7 @@ sub downloadChromosomeFasta{
                 system("mv ".$spec.".".$assembly.".".$version.".dna.chromosome.Mito.fa.gz ".$TMP."/Chromosomes/MT.fa.gz");
             }
             system("gunzip ".$TMP."/Chromosomes/MT.fa.gz");
-        } elsif(uc($species) eq "ZEBRAFISH"){ #Other name 'MtDNA' for c elegans
+        } elsif(uc($species) eq "ZEBRAFISH" || uc($species) eq "C.ELEGANS"){ #Other name 'MtDNA' for zebrafish and c.elegans
             if ($version>75){
                 system("wget -q ftp://ftp.ensembl.org/pub/release-".$version."/fasta/".lc($spec)."/dna//".$spec.".".$assembly.".dna.chromosome.MtDNA.fa.gz");
                 system("mv ".$spec.".".$assembly.".dna.chromosome.MtDNA.fa.gz ".$TMP."/Chromosomes/MT.fa.gz");
