@@ -299,7 +299,7 @@ def main():
         os.system("mkdir -p " + outfolder)
 
     # Download biobix and mappingqc images
-    os.system("wget --quiet \"http://www.nxtgnt.ugent.be/images/img/logos/BIOBIX_logo.png\"")
+    os.system("wget --quiet \"http://galaxy.ugent.be/static/BIOBIX_logo.png\"")
     os.system("mv BIOBIX_logo.png " + outfolder)
     os.system("wget --no-check-certificate --quiet \"https://github.com/Biobix/mQC/raw/master/mqc_tools/logo_mqc2_whitebg.png\"")
     os.system("mv logo_mqc2_whitebg.png " + outfolder)
