@@ -111,8 +111,8 @@ if ($galaxy){
     if ($galaxytest ne 'N' && $galaxytest ne 'Y'){
         print "ERROR: galaxytest option should be Y or N!\n";
         die;
-    } elsif (uc($species) ne "HUMAN"&& uc($species) ne "MOUSE" && uc($species) ne "FRUITFLY" && uc($species) ne "ZEBRAFISH") {
-        print "ERROR: galaxy test can only run on human, mouse, fruitfly or zebrafish!\n";
+    } elsif (uc($species) ne "HUMAN"&& uc($species) ne "MOUSE" && uc($species) ne "FRUITFLY" && uc($species) ne "ZEBRAFISH" && uc($species) ne "C.ELEGANS") {
+        print "ERROR: galaxy test can only run on human, mouse, fruitfly, c.elegans or zebrafish!\n";
         die;
     }
 } else {
@@ -2764,7 +2764,7 @@ sub get_seq_region_id{
         if($chr eq "MT"){
             $chr = "Mito";
         }
-    } elsif (uc($species) eq "ZEBRAFISH"){
+    } elsif (uc($species) eq "ZEBRAFISH" or uc($species) eq "C.ELEGANS"){
         if($chr eq "MT"){
             $chr = "MtDNA";
         }
