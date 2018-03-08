@@ -9,7 +9,7 @@ Main script is mQC.pl and you can run it as in following example:
 mQC.pl --experiment_name yourexperimentname --samfile yoursamfile.sam --cores 20 --species human --ens_v 86 --ens_db ENS_hsa_86.db --unique N --offset plastid --plastid_bam yourbamfile.bam  --tool_dir mqc_tools
 ```
 
-The stand-alone version of mappingQC (mQC) can be installed from Conda:
+The stand-alone version of mappingQC (mQC) can be installed from Conda (Be sure to install it in an Python 2.7 environment, not Python3!):
 ```
 conda install mqc
 ```
