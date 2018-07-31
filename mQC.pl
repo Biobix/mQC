@@ -511,6 +511,13 @@ my $samFileName = $splitsam[$#splitsam];
 $samFileName = $splitsam[0];
 my $samfilechr1 = $TMP."/mappingqc/".$samFileName."_1.sam";
 
+my $samfilechr1 = "";
+if($species eq "SL1344"){
+    $samfilechr1 = $TMP."/mappingqc/".$samFileName."_Chromosome.sam";
+} else {
+    $samfilechr1 = $TMP."/mappingqc/".$samFileName."_1.sam";
+}
+
 if (-e $samfilechr1){
     print "Splitted sam files already exist\n";
 } else {
