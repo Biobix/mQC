@@ -509,7 +509,6 @@ my @splitsam = split(/\//, $sam );
 my $samFileName = $splitsam[$#splitsam];
 @splitsam = split(/\./,$samFileName);
 $samFileName = $splitsam[0];
-my $samfilechr1 = $TMP."/mappingqc/".$samFileName."_1.sam";
 
 my $samfilechr1 = "";
 if($species eq "SL1344"){
