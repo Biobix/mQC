@@ -2541,7 +2541,7 @@ sub downloadChromosomeFasta{
                 system("mv ".$spec.".".$assembly.".".$version.".dna.chromosome.Mito.fa.gz ".$TMP."/Chromosomes/MT.fa.gz");
             }
             system("gunzip ".$TMP."/Chromosomes/MT.fa.gz");
-        } elsif(uc($species) eq "ZEBRAFISH" || uc($species) eq "C.ELEGANS"){ #Other name 'MtDNA' for zebrafish and c.elegans
+        } elsif(uc($species) eq "C.ELEGANS"){ #Other name 'MtDNA' for c.elegans
             if ($version>75){
                 system("wget -q ftp://ftp.ensembl.org/pub/release-".$version."/fasta/".lc($spec)."/dna//".$spec.".".$assembly.".dna.chromosome.MtDNA.fa.gz");
                 system("mv ".$spec.".".$assembly.".dna.chromosome.MtDNA.fa.gz ".$TMP."/Chromosomes/MT.fa.gz");
