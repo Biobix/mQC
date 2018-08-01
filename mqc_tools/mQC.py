@@ -55,7 +55,7 @@ ARGUMENTS
                                                 (default = current working directory)
     -s | --input_samfile                    The sam file used as input
                                                 (default STAR/fastq1/untreat.sam)
-    -e | --exp_name                         The name of the experiment
+    -n | --exp_name                         The name of the experiment
                                                 (mandatory)
     -o | --outfolder                        The output directory
                                                 (default workdir/mappingQC_output/)
