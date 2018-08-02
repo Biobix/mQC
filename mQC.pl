@@ -2770,7 +2770,7 @@ sub get_seq_region_id{
         if($chr eq "MT"){
             $chr = "Mito";
         }
-    } elsif (uc($species) eq "ZEBRAFISH" or uc($species) eq "C.ELEGANS"){
+    } elsif (uc($species) eq "C.ELEGANS"){
         if($chr eq "MT"){
             $chr = "MtDNA";
         }
