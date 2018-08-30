@@ -1,5 +1,12 @@
-<img style="float: right;" src="https://github.com/Biobix/mQC/blob/master/mqc_tools/logo_mqc2_whitebg.png" width="70" title="mQC logo">
+<p style="right">
+  <img src="https://github.com/Biobix/mQC/blob/master/mqc_tools/logo_mqc2_whitebg.png" width="70" title="mQC logo">
+</p>
 
+![mQC logo alt >](https://github.com/Biobix/mQC/blob/master/mqc_tools/logo_mqc2_whitebg.png)
+
+img[alt$=">"] {
+  float:right;
+}
 
 # MappingQC  (stand-alone version)
 
