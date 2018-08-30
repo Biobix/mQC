@@ -1,3 +1,8 @@
+
+![mQC_logo][logo]
+
+[logo]: https://github.com/Biobix/mQC/blob/master/mqc_tools/logo_mqc2_whitebg.png "Logo mQC"
+
 # MappingQC  (stand-alone version)
 
 MappingQC is a tool to easily generate some figures which give a nice overview of the quality of the mapping of ribosome profiling data. More specific, it gives an overview of the P site offset calculation, the gene distribution and the metagenic classification. Furthermore, MappingQC does a thorough analysis of the triplet periodicity and the linked triplet phase (typical for ribosome profiling) in the canonical transcript of your data. Especially, the link between the phase distribution and the RPF length, the relative sequence position and the triplet identity are taken into account.
