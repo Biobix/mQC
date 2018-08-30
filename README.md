@@ -1,6 +1,8 @@
-<p align="right">
-  <img src="https://github.com/Biobix/mQC/blob/master/mqc_tools/logo_mqc2_whitebg.png" width="70" title="mQC logo">
-</p>
+<div style="position: absolute; right: 0; top: 10px;">
+    <p align="left">
+      <img src="https://github.com/Biobix/mQC/blob/master/mqc_tools/logo_mqc2_whitebg.png" width="70" title="mQC logo">
+    </p>
+ </div>
 
 # MappingQC  (stand-alone version)
 
