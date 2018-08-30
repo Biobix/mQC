@@ -1,7 +1,7 @@
-
-![mQC_logo][logo]
-
-[logo]: https://github.com/Biobix/mQC/blob/master/mqc_tools/logo_mqc2_whitebg.png "Logo mQC"
+<p align="left">
+  <img src="https://github.com/Biobix/mQC/blob/master/mqc_tools/logo_mqc2_whitebg.png" width="50" title="mQC logo">
+  <img src="https://github.com/Biobix/mQC/blob/master/mqc_tools/logo_mqc2_whitebg.png" width="50" alt="mQC logo">
+</p>
 
 # MappingQC  (stand-alone version)
 
