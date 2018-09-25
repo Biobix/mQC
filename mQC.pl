@@ -49,7 +49,7 @@ GetOptions(
 "experiment_name=s" => \$exp_name,          # The experiment name                                           Mandatory argument
 "samfile=s"=>\$sam,                         # The samfile/bamfile to do the analysis on                     Mandatory argument
 "cores=i"=>\$cores,                         # The amount of cores to use                                    Optional argument (default: 5)
-"species=s"=>\$species,                     # The species                                                   Mandatory argument (mouse, human, fruitfly, zebrafish, yeast, SL1344, c.elegans)
+"species=s"=>\$species,                     # The species                                                   Mandatory argument (mouse, human, fruitfly, zebrafish, yeast, SL1344, c.elegans, MYC_ABS_ATCC_19977)
 "ens_v=i"=>\$version,                       # The Ensembl version                                           Mandatory argument
 "tmp:s"=>\$tmpfolder,                       # The tmp folder                                                Optional argument (default: CWD/tmp)
 "unique:s"=>\$unique,                       # Consider only unique reads (Y/N)                              Optional argument (default: Y)
@@ -172,10 +172,10 @@ if($sam =~ m/\.([^.]+)$/){
 }
 
 if ($species){
-    if (uc($species) eq "HUMAN" || uc($species) eq "MOUSE" || uc($species) eq "FRUITFLY" || uc($species) eq "ZEBRAFISH" || uc($species) eq "YEAST" || uc($species) eq "SL1344" || uc($species) eq "C.ELEGANS"){
+    if (uc($species) eq "HUMAN" || uc($species) eq "MOUSE" || uc($species) eq "FRUITFLY" || uc($species) eq "ZEBRAFISH" || uc($species) eq "YEAST" || uc($species) eq "SL1344" || uc($species) eq "MYC_ABS_ATCC_19977" || uc($species) eq "C.ELEGANS"){
         print "Species                                                  : $species\n";
     } else {
-        die "ERROR: species should be 'human', 'mouse', 'zebrafish', 'yeast', 'SL1344', 'c.elegans' or 'fruifly'!";
+        die "ERROR: species should be 'human', 'mouse', 'zebrafish', 'yeast', 'SL1344', 'MYC_ABS_ATCC_19977', 'c.elegans' or 'fruifly'!";
     }
 } else {
     die "Do not forget the species argument!";
@@ -200,8 +200,8 @@ if ($mapper){
 }
 
 #Conversion for species terminolo
-my $spec = (uc($species) eq "MOUSE") ? "Mus_musculus" : (uc($species) eq "HUMAN") ? "Homo_sapiens" : (uc($species) eq "SL1344") ? "SL1344" : uc($species) eq "C.ELEGANS" ? "Caenorhabditis_elegans" : (uc($species) eq "ZEBRAFISH") ? "Danio_rerio" : (uc($species) eq "YEAST") ? "Saccharomyces_cerevisiae" : (uc($species) eq "FRUITFLY") ? "Drosophila_melanogaster" : "";
-my $spec_short = (uc($species) eq "MOUSE") ? "mmu" : (uc($species) eq "HUMAN") ? "hsa" : (uc($species) eq "ZEBRAFISH") ? "dre" : (uc($species) eq "YEAST") ? "sce" : uc($species) eq "C.ELEGANS" ? "cel" : (uc($species) eq "FRUITFLY") ? "dme" : (uc($species) eq "SL1344") ? "sl1344" : "";
+my $spec = (uc($species) eq "MOUSE") ? "Mus_musculus" : (uc($species) eq "HUMAN") ? "Homo_sapiens" : (uc($species) eq "MYC_ABS_ATCC_19977") ? "mycobacterium_abscessus_atcc_19977" : (uc($species) eq "SL1344") ? "SL1344" : uc($species) eq "C.ELEGANS" ? "Caenorhabditis_elegans" : (uc($species) eq "ZEBRAFISH") ? "Danio_rerio" : (uc($species) eq "YEAST") ? "Saccharomyces_cerevisiae" : (uc($species) eq "FRUITFLY") ? "Drosophila_melanogaster" : "";
+my $spec_short = (uc($species) eq "MOUSE") ? "mmu" : (uc($species) eq "HUMAN") ? "hsa" : (uc($species) eq "ZEBRAFISH") ? "dre" : (uc($species) eq "YEAST") ? "sce" : uc($species) eq "C.ELEGANS" ? "cel" : (uc($species) eq "FRUITFLY") ? "dme" : (uc($species) eq "SL1344") ? "sl1344" : (uc($species) eq "MYCAB") ? "mycab" : "";
 #Old mouse assembly = NCBIM37, new one is GRCm38. Old human assembly = GRCh37, the new one is GRCh38
 my $assembly = (uc($species) eq "MOUSE" && $version >= 70 ) ? "GRCm38"
 : (uc($species) eq "MOUSE" && $version < 70 ) ? "NCBIM37"
@@ -209,6 +209,7 @@ my $assembly = (uc($species) eq "MOUSE" && $version >= 70 ) ? "GRCm38"
 : (uc($species) eq "HUMAN" && $version < 76) ? "GRCh37"
 : (uc($species) eq "ZEBRAFISH") ? "GRCz10"
 : (uc($species) eq "SL1344") ? "ASM21085v2"
+: (uc($species) eq "MYC_ABS_ATCC_19977") ? "ASM6918v1"
 : (uc($species) eq "YEAST") ? "R64-1-1"
 : (uc($species) eq "C.ELEGANS") ? "WBcel235"
 : (uc($species) eq "FRUITFLY" && $version < 79) ? "BDGP5"
@@ -314,14 +315,14 @@ if ($outzip){
 #Ensembl options
 if ($version){
     print "Ensembl version                                          : $version\n";
-    if(uc($species) eq "SL1344"){
-        if($version>36){
-            print "Error: latest Ensembl Bacteria version is 36!\n";
+    if(uc($species) eq "SL1344" || uc($species) eq "MYC_ABS_ATCC_19977"){
+        if($version>40){
+            print "Error: latest Ensembl Bacteria version is 40!\n";
             die;
         }
     } else {
         if($version>89){
-            print "Error: latest Ensembl version is 89!\n";
+            print "Error: latest Ensembl version is 92!\n";
             die;
         }
     }
@@ -511,9 +512,9 @@ my $samFileName = $splitsam[$#splitsam];
 $samFileName = $splitsam[0];
 
 my $samfilechr1 = "";
-if($species eq "SL1344"){
+if(uc($species) eq "SL1344" || uc($species) eq "MYC_ABS_ATCC_19977"){
     $samfilechr1 = $TMP."/mappingqc/".$samFileName."_Chromosome.sam";
-} else {
+}  else {
     $samfilechr1 = $TMP."/mappingqc/".$samFileName."_1.sam";
 }
 
@@ -2121,6 +2122,10 @@ sub run_plastid{
             system("wget -q ftp://ftp.ensemblgenomes.org/pub/release-".$version."/bacteria/gtf/bacteria_23_collection/salmonella_enterica_subsp_enterica_serovar_typhimurium_str_sl1344/Salmonella_enterica_subsp_enterica_serovar_typhimurium_str_sl1344.".$assembly.".".$version.".gtf.gz");
             system("mv Salmonella_enterica_subsp_enterica_serovar_typhimurium_str_sl1344.".$assembly.".".$version.".gtf.gz ".$TMP."/Genes/genesTmp.gtf.gz");
             system("gunzip ".$TMP."/Genes/genesTmp.gtf.gz");
+        } elsif(uc($species) eq "MYC_ABS_ATCC_19977"){
+            system("wget -q ftp://ftp.ensemblgenomes.org/pub/release-".$version."/bacteria/gtf/bacteria_16_collection/mycobacterium_abscessus_atcc_19977/Mycobacterium_abscessus_atcc_19977.".$assembly.".".$version.".gtf.gz");
+            system("mv Mycobacterium_abscessus_atcc_19977.".$assembly.".".$version.".gtf.gz ".$TMP."/Genes/genesTmp.gtf.gz");
+            system("gunzip ".$TMP."/Genes/genesTmp.gtf.gz");
         } else {
             system("wget -q ftp://ftp.ensembl.org/pub/release-".$version."/gtf/".lc($spec)."//".$spec.".".$assembly.".".$version.".gtf.gz");
             system("mv ".$spec.".".$assembly.".".$version.".gtf.gz ".$TMP."/Genes/genesTmp.gtf.gz");
@@ -2140,7 +2145,7 @@ sub run_plastid{
         system("rm -rf ".$TMP."/Genes/genesTmp.gtf");
         
         #For SL1344, simulate UTRs
-        if(uc($species) eq "SL1344"){
+        if(uc($species) eq "SL1344" || uc($species) eq "MYC_ABS_ATCC_19977"){
             system("python ".$tool_dir."/simulate_utr_for_prokaryotes.py ".$TMP."/Genes/genes.gtf > ".$TMP."/Genes/genes_with_UTR.gtf");
             system("mv ".$TMP."/Genes/genes_with_UTR.gtf ".$TMP."/Genes/genes.gtf");
         }
@@ -2393,7 +2398,10 @@ sub get_coord_system_id{
     my $query = "";
     if (uc($species eq "SL1344")){
         $query = "SELECT * FROM coord_system WHERE name='chromosome' and version='".$assembly."';";
-    } else {
+    } elsif (uc($species eq "MYC_ABS_ATCC_19977")){
+    	# For myc_abs_ATCC_19977 the toplevel is the supercontig instead of the chromosome
+        $query = "SELECT * FROM coord_system WHERE name='supercontig' and version='".$assembly."';";
+    }else {
         $query = "SELECT coord_system_id FROM coord_system WHERE name = 'chromosome' AND version = '$assembly'";
     }
     my $execute = $dbh->prepare($query);
@@ -2450,6 +2458,10 @@ sub get_chrs {
     my $query = "";
     if(uc($species) eq "SL1344"){
         $query="SELECT * FROM coord_system WHERE name='chromosome' and version='".$assembly."';";
+    } 
+    # For Myc_abs_atcc_19977 no chromosome assembly is available so we go for the supercontig (= toplevel)
+    elsif(uc($species) eq "MYC_ABS_ATCC_19977"){
+        $query="SELECT * FROM coord_system WHERE name='supercontig' and version='".$assembly."';";
     } else {
         $query = "SELECT coord_system_id FROM coord_system where name = 'chromosome' and version = '".$assembly."'";
     }
@@ -2484,7 +2496,6 @@ sub get_chrs {
         } else {
             $chr = $key;
         }
-        
         my $query = "SELECT seq_region_id FROM seq_region where coord_system_id = ".$coord_system_id."  and name = '".$chr."' ";
         my $sth = $dbh->prepare($query);
         $sth->execute();
@@ -2565,6 +2576,11 @@ sub downloadChromosomeFasta{
             system("wget -q ftp://ftp.ensemblgenomes.org/pub/release-".$version."/bacteria/fasta/bacteria_23_collection/salmonella_enterica_subsp_enterica_serovar_typhimurium_str_sl1344/dna/Salmonella_enterica_subsp_enterica_serovar_typhimurium_str_sl1344.".$assembly.".dna.chromosome.".$chr.".fa.gz");
             system("gunzip Salmonella_enterica_subsp_enterica_serovar_typhimurium_str_sl1344.".$assembly.".dna.chromosome.".$chr.".fa.gz");
             system("mv Salmonella_enterica_subsp_enterica_serovar_typhimurium_str_sl1344.".$assembly.".dna.chromosome.".$chr.".fa ".$TMP."/Chromosomes/".$chr.".fa");
+        } elsif(uc($species) eq "MYC_ABS_ATCC_19977"){
+        	# For Mycobacterium ABS ATCC 19977 no chromosome is assembled, so we go for the toplevel assembly (noticeable at the end of the name of the downloaded file)
+            system("wget -q ftp://ftp.ensemblgenomes.org/pub/release-".$version."/bacteria/fasta/bacteria_16_collection/mycobacterium_abscessus_atcc_19977/dna/Mycobacterium_abscessus_atcc_19977.".$assembly.".dna.toplevel.fa.gz");
+            system("gunzip Mycobacterium_abscessus_atcc_19977.".$assembly.".dna.toplevel.fa.gz");
+            system("mv Mycobacterium_abscessus_atcc_19977.".$assembly.".dna.toplevel.fa ".$TMP."/Chromosomes/".$chr.".fa");
         } else {
             if ($version>75){
                 system("wget -q ftp://ftp.ensembl.org/pub/release-".$version."/fasta/".lc($spec)."/dna//".$spec.".".$assembly.".dna.chromosome.".$chr.".fa.gz");
@@ -2593,16 +2609,20 @@ sub download_chrominfo {
     #Init
     my $chromList = {};
     
-    if(uc($species) eq "SL1344"){
+    if(uc($species) eq "SL1344" || uc($species) eq "MYC_ABS_ATCC_19977"){
         #For bacteria, chromosome sizes can be fetched out of the files where the Ensembl DB is build from
+        #Also the collection number is also species/strain specific
+        my $collection = (uc($species) eq "MYC_ABS_ATCC_19977") ? '16' : (uc($species) eq "SL1344") ? '23' : '0';
         my $can_version = $version + 53; #Bacteria Ensembl releases are 53 less than the other species
         #first, search coord system id
-        system("wget -q ftp://ftp.ensemblgenomes.org/pub/release-".$version."/bacteria/mysql/bacteria_23_collection_core_".$version."_".$can_version."_1/coord_system.txt.gz");
+        system("wget -q ftp://ftp.ensemblgenomes.org/pub/release-".$version."/bacteria/mysql/bacteria_".$collection."_collection_core_".$version."_".$can_version."_1/coord_system.txt.gz");
         system("gzip -d coord_system.txt.gz");
         my $coord_system_id = 0;
         open(my $IN_CS, '<',"coord_system.txt");
         while(my $line=<$IN_CS>){
-            if ($line =~ m/^(\d+)\t\d+\t\w+\t(\w+)\t1/){
+        	# For SL1344 we take the chromosome coord_system (corresponds to "1" as last field)
+        	# For MYC_ABS_ATCC_19977 we take the supercontig as coord_system (corresponds to "3" as last field)
+            if (($line =~ m/^(\d+)\t\d+\t\w+\t(\w+)\t1/ && uc($species) eq "SL1344") || ($line =~ m/^(\d+)\t\d+\t\w+\t(\w+)\t3/ && uc($species) eq "MYC_ABS_ATCC_19977")){
                 if($2 eq $assembly){
                     $coord_system_id = quotemeta $1;
                 }
@@ -2612,7 +2632,7 @@ sub download_chrominfo {
         system("rm -rf coord_system.txt");
         
         #Then, search for the chromosome in seq_region.txt
-        system("wget -q ftp://ftp.ensemblgenomes.org/pub/release-".$version."/bacteria/mysql/bacteria_23_collection_core_".$version."_".$can_version."_1/seq_region.txt.gz");
+        system("wget -q ftp://ftp.ensemblgenomes.org/pub/release-".$version."/bacteria/mysql/bacteria_".$collection."_collection_core_".$version."_".$can_version."_1/seq_region.txt.gz");
         system("gzip -d seq_region.txt.gz");
         open(my $IN_SR, '<', "seq_region.txt");
         while(my $line=<$IN_SR>){
