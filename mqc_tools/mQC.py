@@ -467,10 +467,10 @@ def write_out_html(outfile, output_folder, samfile, run_name, totmaps, plastid, 
     codon_usage_nav = ""
     codon_usage_part = ""
     if species=='human' or species=='mouse':
-        codon_usage_nav = """<li><a href="#section9">Codon usage plot</a></li>\n"""
+        codon_usage_nav = """<li><a href="#section9">Total codon count plot</a></li>\n"""
         codon_usage_part = """
         <span class="anchor" id="section9"></span>
-        <h2 id="codon_usage">Codon usage plot</h2>
+        <h2 id="codon_usage">Total codon count plot</h2>
         <p>
             <div class="img">
             <img src=\"codon_usage.png" alt="codon_usage_plot" id="codon_usage_img">
@@ -1038,7 +1038,7 @@ def plot_codon_perc(output_file, sorted_triplets, reference, codon_percs, name):
     plt.yticks(fontsize=30)
     ax.set_xticks(xpos)
     ax.set_xticklabels(labels, rotation='vertical', fontsize=30)
-    ax.set_title('Codon usage', fontsize=80)
+    ax.set_title('Total ribosome count per codon identity', fontsize=80)
     plt.legend(fontsize=40)
 
     plt.tight_layout()
