@@ -691,6 +691,34 @@ if ((!-e $TMP."/mappingqc/rpf_phase.csv") || (!-e $TMP."/mappingqc/pos_table_all
         }
     }
     close(OUT_TOTAL_TRIPLET);
+    
+    ## NORMALIZED TRIPLET COUNTS FILE
+    print "\tNormalized triplet counts";
+    #Cat norm triplet count file
+    my $total_norm_triplet = {};
+    foreach my $chr (keys %chr_sizes){
+        my $infile = $TMP."/mappingqc/triplet_phase_norm_".$chr.".csv";
+        open(IN, "< ".$infile) or die $!;
+        while(my $line = <IN>){
+            chomp($line);
+            my @linesplit = split(',', $line);
+            my $triplet = $linesplit[0];
+            my $norm_count = $linesplit[1];
+            if(exists $total_norm_triplet->{$triplet}){
+                $total_norm_triplet->{$triplet} = $total_norm_triplet->{$triplet} + $norm_count;
+            } else {
+                $total_norm_triplet->{$triplet} = $norm_count;
+            }
+        }
+        close(IN);
+    }
+    #Write total file for norm triplet counts
+    my $temp_total_norm_triplet = $TMP."/mappingqc/norm_triplet.csv";
+    open(OUT_NORM_TRIPLET, "+>> ".$temp_total_norm_triplet);
+    foreach my $triplet (keys %{$total_norm_triplet}){
+        print OUT_NORM_TRIPLET $triplet.",".$total_norm_triplet->{$triplet}."\n";
+    }
+    close(OUT_NORM_TRIPLET);
 
 } else {
     print "Ribosomal parsing already done\n"
@@ -1562,7 +1590,7 @@ sub RIBO_parsing_genomic_per_chr {
     $samFileName = $splitsam[0];
     
     #Construct phase library
-    my ($phase_lib, $triplet_lib) = construct_phase_lib($chr, $ens_db, $coord_system_id);
+    my ($phase_lib, $triplet_lib, $transcript_lib) = construct_phase_lib($chr, $ens_db, $coord_system_id);
     
     #Initialize
     my ($genmatchL,$offset,$start,$intron_total,$extra_for_min_strand);
@@ -1574,10 +1602,13 @@ sub RIBO_parsing_genomic_per_chr {
     }
     my $phase_count_file = $TMP."/mappingqc/rpf_phase_".$chr.".csv";
     my $phase_count_triplet = {};
+    my $count_triplet_transcript = {};
     my $triplet_count_file = $TMP."/mappingqc/triplet_phase_".$chr.".csv";
+    my $norm_triplet_count_file = $TMP."/mappingqc/triplet_phase_norm_".$chr.".csv";
     my $chr_sam_file = $TMP."/mappingqc/".$samFileName."_".$chr.".sam";
     my $pos_file = $TMP."/mappingqc/phase_position_".$chr.".csv";
     my $hits_genomic = {};
+    my $counts_per_transcript = {};
     
     open (I,"<".$chr_sam_file) || die "Cannot open ".$chr_sam_file."\n";
     open (OUT_POS, "+>>".$pos_file) or die $!;
@@ -1628,6 +1659,24 @@ sub RIBO_parsing_genomic_per_chr {
                         $phase_count_triplet->{$read_triplet}->{2} = 0;
                         $phase_count_triplet->{$read_triplet}->{$read_phase}++;
                     }
+                    #Count triplets also per transcript, but do not include phase stratifier
+                    if(exists $transcript_lib->{$strandAlt}->{$start}){
+                        my $transcript = $transcript_lib->{$strandAlt}->{$start};
+                        if(exists $count_triplet_transcript->{$transcript}->{$read_triplet}){
+                            $count_triplet_transcript->{$transcript}->{$read_triplet}++;
+                        } else {
+                            $count_triplet_transcript->{$transcript}->{$read_triplet} = 1;
+                        }
+                    }
+                    #Count reads per ORF for normalizing afterwards
+                    if(exists $transcript_lib->{$strandAlt}->{$start}){
+                        my $read_transcript = $transcript_lib->{$strandAlt}->{$start};
+                        if(exists $counts_per_transcript->{$read_transcript}){
+                            $counts_per_transcript->{$read_transcript}++;
+                        } else {
+                            $counts_per_transcript->{$read_transcript} = 1;
+                        }
+                    }
                 }
             }
             
@@ -1642,6 +1691,19 @@ sub RIBO_parsing_genomic_per_chr {
             }
         }
 
+    }
+    
+    #Normalize triplet counts per transcript over the transcript expression
+    my $norm_triplet_counts = {};
+    foreach my $transcript (keys %{$count_triplet_transcript}){
+        foreach my $triplet (keys %{$count_triplet_transcript->{$transcript}}){
+            my $norm_triplet_count = $count_triplet_transcript->{$transcript}->{$triplet}/$counts_per_transcript->{$transcript};
+            if(exists $norm_triplet_counts->{$triplet}){
+                $norm_triplet_counts->{$triplet} = $norm_triplet_counts->{$triplet} + $norm_triplet_count;
+            } else {
+                $norm_triplet_counts->{$triplet} = $norm_triplet_count;
+            }
+        }
     }
     
     #Stop reading out of input files
@@ -1686,6 +1748,15 @@ sub RIBO_parsing_genomic_per_chr {
     }
     
     close(OUT_TRIPLET_PHASE);
+    
+    #Write to chromosomal norm triplet tmp file
+    open (OUT_NORM_TRIPLET, "+>>".$norm_triplet_count_file) or die $!;
+    
+    foreach my $triplet (keys %{$norm_triplet_counts}){
+        print OUT_NORM_TRIPLET $triplet.",".$norm_triplet_counts->{$triplet}."\n";
+    }
+    
+    close(OUT_NORM_TRIPLET);
     
     return;
 }
@@ -1850,6 +1921,7 @@ sub construct_phase_lib{
     #Init
     my $phase_lib = {};
     my $triplet_lib = {};
+    my $transcript_lib = {};
     my $dsn_sqlite_ens = "DBI:SQLite:dbname=$eDB";
     my $us_sqlite_ens  = "";
     my $pw_sqlite_ens  = "";
@@ -1866,13 +1938,13 @@ sub construct_phase_lib{
     #Get exon structure of each transcript
     foreach my $transcript (@$transcripts){
         my($exon_struct,$strand,$max_tr_rank) = get_exon_struct_transcript($dbh_ens, $transcript, $chr);
-        ($phase_lib, $triplet_lib) = add_transcript_to_phase_lib($phase_lib, $triplet_lib, $exon_struct, $strand, $max_tr_rank);
+        ($phase_lib, $triplet_lib, $transcript_lib) = add_transcript_to_phase_lib($phase_lib, $triplet_lib, $transcript_lib, $exon_struct, $strand, $max_tr_rank, $transcript);
     }
     
     #Disconnect
     $dbh_ens->disconnect;
     
-    return ($phase_lib, $triplet_lib);
+    return ($phase_lib, $triplet_lib, $transcript_lib);
 }
 
 #Add transcript to phase lib
@@ -1881,9 +1953,11 @@ sub add_transcript_to_phase_lib{
     #Catch
     my $phase_lib = $_[0];
     my $triplet_lib = $_[1];
-    my $exon_struct = $_[2];
-    my $strand = $_[3];
-    my $max_tr_rank = $_[4];
+    my $transcript_lib = $_[2];
+    my $exon_struct = $_[3];
+    my $strand = $_[4];
+    my $max_tr_rank = $_[5];
+    my $transcript = $_[6];
     
     my $cur_phase = 0;
     my $cur_transcriptomic_pos = 1;
@@ -1899,6 +1973,7 @@ sub add_transcript_to_phase_lib{
                 }
                 $triplet_lib->{$strand}->{$position} = $cur_triplet;#Add triplet to triplet lib
                 $phase_lib->{$strand}->{$position}->{"transcriptomic_pos"} = $cur_transcriptomic_pos; #For rel position calculation
+                $transcript_lib->{$strand}->{$position} = $transcript; #For each position in the canonical coding ORF: keep its transcript ID from Ensembl
                 #Get ready for next position
                 $cur_phase++;
                 if($cur_phase == 3){
@@ -1928,6 +2003,7 @@ sub add_transcript_to_phase_lib{
                 }
                 $triplet_lib->{$strand}->{$position} = $cur_triplet;
                 $phase_lib->{$strand}->{$position}->{"transcriptomic_pos"} = $cur_transcriptomic_pos;
+                $transcript_lib->{$strand}->{$position} = $transcript;
                 #Set for next position
                 $cur_phase++;
                 if($cur_phase == 3){
@@ -1950,7 +2026,7 @@ sub add_transcript_to_phase_lib{
         }
     }
     
-    return $phase_lib, $triplet_lib;
+    return $phase_lib, $triplet_lib, $transcript_lib;
 }
 
 ## Construct exon structure for certain transcript

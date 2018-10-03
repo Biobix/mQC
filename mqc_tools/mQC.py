@@ -306,10 +306,14 @@ def main():
 
     #Download codon refs for human or mouse
     codon_ref_file = ""
+    norm_codon_ref_file = ""
     if species == 'human':
         os.system("wget --quiet --no-check-certificate \"https://raw.githubusercontent.com/Biobix/mQC/master/mqc_tools/codon_refs/codon_reference_human.csv\"")
         os.system("mv codon_reference_human.csv "+tmpfolder+"/mappingqc")
         codon_ref_file = tmpfolder+"/mappingqc/codon_reference_human.csv"
+        os.system("wget --quiet --no-check-certificate \"https://raw.githubusercontent.com/Biobix/mQC/master/mqc_tools/codon_refs/norm_codon_reference_human.csv\"")
+        os.system("mv norm_codon_reference_human.csv " + tmpfolder + "/mappingqc")
+        norm_codon_ref_file = tmpfolder + "/mappingqc/norm_codon_reference_human.csv"
     if species == 'mouse':
         os.system("wget --quiet --no-check-certificate \"https://raw.githubusercontent.com/Biobix/mQC/master/mqc_tools/codon_refs/codon_reference_mouse.csv\"")
         os.system("mv codon_reference_mouse.csv " + tmpfolder + "/mappingqc")
@@ -343,6 +347,10 @@ def main():
     #Make codon usage plot
     if species=='human' or species=='mouse':
         codon_usage_plot(tmpfolder, codon_ref_file, outfolder, exp_name)
+
+    #Make normalized codon plot
+    if species=='human':
+        norm_codon_plot(tmpfolder, codon_ref_file, norm_codon_ref_file, outfolder, exp_name)
 
     #Write to output html file
     offsets_file = tmpfolder+"/mappingqc/mappingqc_offsets.csv"
@@ -478,6 +486,20 @@ def write_out_html(outfile, output_folder, samfile, run_name, totmaps, plastid, 
         </p>
         """
 
+    #Prepare additional pieces for norm codon usage plot
+    norm_codon_usage_nav = ""
+    norm_codon_usage_part = ""
+    if species=='human':
+        norm_codon_usage_nav = """<li><a href="#section10">Normalized total codon count plot</a></li>\n"""
+        norm_codon_usage_part = """
+        <span class="anchor" id="section10"></span>
+        <h2 id="norm_codon_usage">Normalized total codon count plot</h2>
+        <p>
+            <div class="img">
+            <img src=\"norm_codon_plot.png" alt="norm_codon_usage_plot" id="norm_codon_usage_img">
+            </div>
+        </p>
+        """
 
     #Structure of html file
     html_string = """<!DOCTYPE html>
@@ -860,6 +882,7 @@ def write_out_html(outfile, output_folder, samfile, run_name, totmaps, plastid, 
             <li><a href="#section7">Phase - relative position distribution</a></li>
             <li><a href="#section8">Triplet identity plots</a></li>
             """+codon_usage_nav+"""
+            """+norm_codon_usage_nav+"""
         </ul>
     </nav>
 
@@ -965,6 +988,8 @@ def write_out_html(outfile, output_folder, samfile, run_name, totmaps, plastid, 
 
         """+codon_usage_part+"""
 
+        """+norm_codon_usage_part+"""
+
         <br><br>
     </div>
 
@@ -979,6 +1004,30 @@ def write_out_html(outfile, output_folder, samfile, run_name, totmaps, plastid, 
     html_file = open(outfile, 'w')
     html_file.write(html_string)
     html_file.close()
+
+    return
+
+## Normalized codon plot
+def norm_codon_plot(tmpfolder, codon_ref_file, norm_codon_ref_file, outfolder, exp_name):
+
+    #Output file
+    output_file = outfolder + "/norm_codon_plot.png"
+
+    #Read reference
+    norm_reference = read_ref(norm_codon_ref_file)
+
+    # Read input norm codon
+    input_file = tmpfolder + "/mappingqc/norm_triplet.csv"
+    name = exp_name
+    norm_codon_perc = read_norm_codon_count(input_file)
+
+    # Sort triplets based on reference percentages (classic codon usage)
+    sorted_norm_triplets = []
+    for i in sorted(norm_reference, key=lambda k: norm_reference[k], reverse=True):
+        sorted_norm_triplets.append(i)
+
+    #Plot
+    plot_norm_codon_perc(output_file, sorted_norm_triplets, norm_reference, norm_codon_perc, name, 'Normalized total ribosome count per codon identity')
 
     return
 
@@ -1003,6 +1052,48 @@ def codon_usage_plot(tmpfolder, codon_ref_file, outfolder, exp_name):
 
     # Plot
     plot_codon_perc(output_file, sorted_triplets, reference, codon_perc, name)
+
+    return
+
+#Plot norm codon percentages
+def plot_norm_codon_perc(output_file, sorted_norm_triplets, norm_reference, norm_codon_perc, name, title):
+
+    #Parse data
+    sorted_ref_values = []
+    for i in sorted_norm_triplets:
+        sorted_ref_values.append(norm_reference[i])
+    xpos = range(1, len(sorted_ref_values)+1)
+
+    sorted_codon_values = []
+    for i in sorted_norm_triplets:
+        sorted_codon_values.append(norm_codon_perc[i])
+
+    #Labels
+    labels = []
+    codontable = get_codontable()
+    for i in sorted_norm_triplets:
+        labels.append(i+" ("+codontable[i]+")")
+
+    #Plot
+    fig = plt.figure(figsize=(36,32))
+    ax = plt.axes()
+    points = ax.plot(xpos, sorted_ref_values, marker='o', linewidth=15, color='#3BBE71', markersize=20, alpha=0.7, label='Normalized reference')
+    bars = ax.bar(xpos, sorted_codon_values, color='#228EDA', label=name)
+    plt.xlim([0, len(sorted_ref_values)+1])
+    [y1, y2] = ax.get_ylim()
+    plt.ylim([0, y2])
+    ax.set_ylabel('Percentage normalized codon count [in %]', fontsize=40)
+    ax.set_xlabel('Triplet (amino acid)', fontsize=40)
+    plt.yticks(fontsize=30)
+    ax.set_xticks(xpos)
+    ax.set_xticklabels(labels, rotation='vertical', fontsize=30)
+    ax.set_title(title, fontsize=80)
+    plt.legend(fontsize=40)
+
+    plt.tight_layout()
+
+    fig.savefig(output_file)
+
 
     return
 
@@ -1033,7 +1124,7 @@ def plot_codon_perc(output_file, sorted_triplets, reference, codon_percs, name):
     plt.xlim([0,len(sorted_ref_values)+1])
     [y1, y2] = ax.get_ylim()
     plt.ylim([0, y2])
-    ax.set_ylabel('Percentage codon usage [in %]', fontsize=40)
+    ax.set_ylabel('Percentage codon count [in %]', fontsize=40)
     ax.set_xlabel('Triplet (amino acid)', fontsize=40)
     plt.yticks(fontsize=30)
     ax.set_xticks(xpos)
@@ -1046,6 +1137,28 @@ def plot_codon_perc(output_file, sorted_triplets, reference, codon_percs, name):
     fig.savefig(output_file)
 
     return
+
+#Read norm codon count
+def read_norm_codon_count(input_file):
+
+    #Init
+    norm_codon_perc = defaultdict()
+    norm_counts = defaultdict()
+    total_sum = float(0)
+
+    with open(input_file, 'r') as FR:
+        lines = FR.readlines()
+        for line in lines:
+            line.rstrip("\n")
+            (triplet, count) = re.split(',', line)
+            norm_counts[triplet] = float(count)
+            total_sum = total_sum + float(count)
+
+    #Calculate percentages
+    for triplet in norm_counts.keys():
+        norm_codon_perc[triplet] = norm_counts[triplet]/total_sum*100
+
+    return norm_codon_perc
 
 #Read codon count
 def read_codon_count(input_codon_count):
