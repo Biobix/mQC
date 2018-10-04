@@ -1267,7 +1267,7 @@ def phase_position_distr(tmpfolder, outfolder):
 
     #Axis info
     plt.ylabel("Counts", fontsize=38)
-    plt.xlabel("Relative position in sequence", fontsize=38)
+    plt.xlabel("Relative position in coding sequence", fontsize=38)
     plt.xlim([0, 1])
     ax.tick_params(labelsize=34)
 
