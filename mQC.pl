@@ -40,7 +40,7 @@ use Cwd;
 
 # nohup perl ./mQC.pl --experiment_name test --samfile untreat.sam --cores 20 --species mouse --ens_db ENS_mmu_86.db --ens_v 86 --offset plastid > nohup_mappingqc.txt &
 
-my($work_dir,$exp_name,$sam,$original_bam,$cores,$species,$version,$tmpfolder,$unique,$mapper,$maxmultimap,$ens_db,$offset_option,$offset_file,$bam,$tool_dir,$plotrpftool,$min_length_plastid,$max_length_plastid,$min_length_gd,$max_length_gd,$outfolder,$outhtml,$outzip,$galaxy,$galaxysam,$galaxytest);
+my($work_dir,$exp_name,$sam,$original_bam,$cores,$species,$version,$tmpfolder,$unique,$mapper,$maxmultimap,$ens_db,$offset_option,$offset_file,$cst_3prime_offset,$min_cst_3prime_offset,$max_cst_3prime_offset,$bam,$tool_dir,$plotrpftool,$min_length_plastid,$max_length_plastid,$min_length_gd,$max_length_gd,$outfolder,$outhtml,$outzip,$galaxy,$galaxysam,$galaxytest);
 my $help;
 
 
@@ -61,10 +61,13 @@ GetOptions(
 "offset_file:s" =>\$offset_file,            # The offsets input file                                        Mandatory if offset option equals 'from_file'
 "plastid_bam:s" =>\$bam,                    # The corresponding bam file                                    Optional and only used for plastid when offset option equals 'plastid'
                                             # This file will be needed for plastid offset generation. Default bam file will be 'convert' and the bam file will be converted out of the sam file
-"min_length_plastid=i" =>\$min_length_plastid,          # Minimum length for plastid offset generation                  Optional argument (default: 22), only used when offset option equals 'plastid'
-"max_length_plastid=i" =>\$max_length_plastid,          # Maximum length for plastid offset gene                        Optional argument (default: 34), only used when offset option equals 'plastid'
-"min_length_gd=i" =>\$min_length_gd,        #Minimum length for gene distribution and metagenic classification          Optional argument (default: 26)
-"max_length_gd=i" =>\$max_length_gd,        #Maximum length for gene distribution and metagenic classification          Optional argument (default: 34)
+"min_length_plastid=i" =>\$min_length_plastid,          # Minimum RPF length for plastid offset generation              Optional argument (default: 22), only used when offset option equals 'plastid'
+"max_length_plastid=i" =>\$max_length_plastid,          # Maximum RPF length for plastid offset gene                    Optional argument (default: 34), only used when offset option equals 'plastid'
+"cst_3prime_offset=i" =>\$cst_3prime_offset,            # The value of the constant 3' offset (only used with cst_3prime offset option)     Optional argument (default: 15)
+"min_cst_3prime_offset=i" =>\$min_cst_3prime_offset,    # Minimum RPF length with cst 3' offset                         Optional argument (default: 22)
+"max_cst_3prime_offset=i" =>\$max_cst_3prime_offset,    # Maximum RPF length with cst 3' offset                         Optional argument (default: 40)
+"min_length_gd=i" =>\$min_length_gd,        # Minimum RPF length for gene distribution and metagenic classification     Optional argument (default: 26)
+"max_length_gd=i" =>\$max_length_gd,        # Maximum RPF length for gene distribution and metagenic classification     Optional argument (default: 34)
 "tool_dir:s" => \$tool_dir,                 # The directory with all necessary tools                                    Optional argument (default: conda default installation location)
 "plotrpftool:s" => \$plotrpftool,           # The module that will be used for plotting the RPF-phase figure
                                                 #grouped2D: use Seaborn to plot a grouped 2D bar chart (default)
@@ -350,10 +353,10 @@ if ($maxmultimap){
     print "Maximun number of loci for reads to be acceptable        : $maxmultimap\n";
 }
 if ($offset_option) {
-    if ($offset_option eq "standard" || $offset_option eq "from_file" || $offset_option eq "plastid") {
+    if ($offset_option eq "standard" || $offset_option eq "from_file" || $offset_option eq "plastid" || $offset_option eq "cst_3prime") {
         print "Offset source                                            : $offset_option\n";
     } else {
-        die "Offset argument needs to be \" standard\", \"from_file\" or \"plastid\"!";
+        die "Offset argument needs to be \" standard\", \"from_file\", \"cst_3prime\" or \"plastid\"!";
     }
 } else {
     $offset_option = "standard";
@@ -391,6 +394,20 @@ if ($offset_option eq "plastid"){
         $max_length_plastid = 34;
         print "Maximum length for plastid offset generation             : $max_length_plastid\n";
     }
+}
+unless ($cst_3prime_offset) {
+    $cst_3prime_offset = 15; #Default value
+}
+unless ($min_cst_3prime_offset) {
+    $min_cst_3prime_offset = 22 #Default
+}
+unless ($max_cst_3prime_offset) {
+    $max_cst_3prime_offset = 40 #Default
+}
+if ($offset_option eq "cst_3prime"){
+    print "Constant 3' offset:                                        : $cst_3prime_offset\n";
+    print "Minimum RPF length for constant 3' offset:                 : $min_cst_3prime_offset\n";
+    print "Maximum RPF length for constant 3' offset:                 : $max_cst_3prime_offset\n";
 }
 if ($min_length_gd){
     print "Minimum length for gene distribution and metagene analysis : $min_length_gd\n";
@@ -553,6 +570,15 @@ if($offset_option eq "plastid"){
             }
         }
     }
+} elsif($offset_option eq "cst_3prime"){
+    
+    #Translate constant 3 prime offsets into 5 prime offsets
+    $offset_hash->{"min"} = $min_cst_3prime_offset;
+    $offset_hash->{"max"} = $max_cst_3prime_offset;
+    for(my $rpf = $offset_hash->{"min"}; $rpf<=$offset_hash->{"max"}; $rpf++){
+        $offset_hash->{$rpf} = $rpf - $cst_3prime_offset - 1
+    }
+    
 } else {
     #Standard P site offset options from Ingolia paper (2012) (cfr. suppl methods in that paper)
     if(uc($species) eq 'FRUITFLY'){

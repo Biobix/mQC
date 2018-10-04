@@ -63,7 +63,7 @@ ARGUMENTS
                                                 (default mQC.html)
     -z | --outzip                           The output zip file name
                                                 (default mQC.zip)
-    -p | --plastid_option                   Origin of offsets (plastid, standard or from_file)
+    -p | --plastid_option                   Origin of offsets (plastid, standard, cst_3prime or from_file)
                                                 (default standard)
     -i | --plastid_img                      Path to the plastid offset image
                                                 (mandatory if plastid option equals 'plastid')
@@ -266,8 +266,8 @@ def main():
             outzip_short = outzip
     if plastid_option == '':
         plastid_option = 'standard'
-    elif plastid_option != 'standard' and plastid_option != 'plastid' and plastid_option != 'from_file':
-        print "ERROR: plastid option should be 'plastid', 'standard' or 'from_file'!"
+    elif plastid_option != 'standard' and plastid_option != 'plastid' and plastid_option != 'from_file' and plastid_option != 'cst_3prime':
+        print "ERROR: plastid option should be 'plastid', 'standard', 'cst_3prime' or 'from_file'!"
         sys.exit()
     if plastid_option == 'plastid':
         if plastid_img == '':

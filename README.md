@@ -69,8 +69,11 @@ conda update readline
     Possible options:		
       - plastid: calculate the offsets with Plastid (Dunn et al. 2016)
         The mapping bam file will be needed for Plastid. You can put the path to the BAM file in with the --plastid_bam argument. If you put in '--plastid_bam convert', then mappingQC converts the SAM file argument to a BAM file and uses this one for Plastid. (default: convert)
-        Furthermore, you need to give the minimum and maximum RPRF length for Plastid offset generation in the --min_length_plastid and --max_length_plastid arguments respectively. To assess an ideal minimum and maximum value, you can use the length distribution given in the FastQC output (<https://www.bioinformatics.babraham.ac.uk/projects/fastqc/>) (default values: 22 and 34)
+        Furthermore, you need to give the minimum and maximum RPF length for Plastid offset generation in the --min_length_plastid and --max_length_plastid arguments respectively. To assess an ideal minimum and maximum value, you can use the length distribution given in the FastQC output (<https://www.bioinformatics.babraham.ac.uk/projects/fastqc/>) (default values: 22 and 34)
       - standard: use the standard offsets from the paper of Ingolia et al. (2012) (default option)
+      - cst_3prime: use constant 3' offsets. This option seems beneficial for some Prokaryote species (Woolstenhulme et al. 2015)
+        The constant distance to the 3' end should be given under the --cst_3prime_offset argument (default: 15).
+        The minimum and maximum RPF length on which to apply this 3' offsets should be given as resp. --min_cst_3prime_offset and --max_cst_3prime_offset (default: resp. 22 and 40)
       - from_file: use offsets from an input file
         The offsets input file should be given in the —offset_file argument
   * min_length_gd: minimum RPF length used for gene distributions and metagenic classification (default: 26).
@@ -99,6 +102,8 @@ Following figures are included in the folder and in the overview HTML file:
   * RPF-phase distribution: shows you how the counts are divided over the three reading frames, but also separated over the different RPF lengths. This is also based on the canonical translation products of canonical protein-coding transcripts.
   * Phase - relative position distribution: shows you how the counts are divided over the three reading frames on a metagenic scale over all canonical reading frames. Relative position 0 means metagenically at the beginning of the sequences; relative position 1 means at the metagenic end of the sequences.
   * Triplet identity plots: shows you the reading frame distribution separated for all possible codons. This can pick up if there are any reading frame distribution biases for specific codons. The resulting amino acid or Start/Stop signal of each codon is given as well.
+  * Total ribosomal codon counts plot: ribosomal counts summed over the different possible codons (and their amino acids). The reference line is an average of the codon counts over multiple ribosome profiling samples of the selected species. (For the moment only available for human and mouse, more species will follow.)
+  * Normalized total ribosomal codon counts plot: for this plot, the ribosomal counts in each open reading frame (ORF) were divided by the total count of RPFs in that ORF, thus normalizing by ORF expression. Afterwards, normalized codon counts were summed for the whole genome and plotted as bars. The reference line is obtained by calculating these summed normalized codon counts for different samples of the selected species. The average is taken of all these samples and is plotted as the reference line. (For the moment only available for human, more species will follow.)
 
 ## Dependencies
 
