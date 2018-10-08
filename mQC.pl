@@ -2947,10 +2947,14 @@ sub print_help_text {
                                 - plastid: calculate the offsets with Plastid (Dunn et al. 2016)
                                 - standard: use the standard offsets from the paper of Ingolia et al. (2012) (default option)
                                 - from_file: use offsets from an input file
+                                - cst_3prime: use offsets with constant 3prime distance
     --plastid_bam           the mapping bam file for Plastid offset generation (default: convert)
     --min_length_plastid    the minimum RPF length for Plastid offset generation (default 22)
     --max_length_plastid    the maximum RPF length for Plastid offset generation (default 34)
     --offset_file           the offsets input file
+    --cst_3prime_offset     the value for the constant 3prime offset (default: 15)
+    --min_cst_3prime_offset minimum RPF length with cst 3prime offset (default: 22)
+    --max_cst_3prime_offset maximum RPF length with cst 3prime offset (default: 40)
     --min_length_gd         minimum RPF length used for gene distributions and metagenic classification (default: 26).
     --max_length_gd         maximum RPF length used for gene distributions and metagenic classification (default: 34).
     --outfolder             the folder to store the output files (default: work_dir/mQC_output)
@@ -2965,5 +2969,6 @@ sub print_help_text {
     ";
     
     print $help_string."\n";
+    
     
 }
