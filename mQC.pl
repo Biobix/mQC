@@ -687,8 +687,16 @@ if ((!-e $TMP."/mappingqc/rpf_phase.csv") || (!-e $TMP."/mappingqc/pos_table_all
 
     ## TRIPLET IDENTITY PHASE FILE
     print "\tTriplet identity distributions\n";
+    my $all_codons = all_codons();
+    my $all_phases = ['0', '1', '2'];
     #Read in chr tmp files
+    #Init hash
     my $triplet_phase = {};
+    foreach my $triplet (@$all_codons){
+        foreach my $phase ($all_phases){
+            $triplet_phase->{$triplet}->{$phase} = 0;
+        }
+    }
     foreach my $chr (keys %chr_sizes){
         my $infile = $TMP."/mappingqc/triplet_phase_".$chr.".csv";
         open(IN, "< ".$infile) or die $!;
@@ -698,11 +706,7 @@ if ((!-e $TMP."/mappingqc/rpf_phase.csv") || (!-e $TMP."/mappingqc/pos_table_all
             my $triplet = $linesplit[0];
             my $phase = $linesplit[1];
             my $count = $linesplit[2];
-            if(exists $triplet_phase->{$triplet}->{$phase}){
-                $triplet_phase->{$triplet}->{$phase} = $triplet_phase->{$triplet}->{$phase} + $count;
-            } else {
-                $triplet_phase->{$triplet}->{$phase} = $count;
-            }
+            $triplet_phase->{$triplet}->{$phase} = $triplet_phase->{$triplet}->{$phase} + $count;
         }
         close(IN);
         system("rm -rf ".$infile);
@@ -721,7 +725,11 @@ if ((!-e $TMP."/mappingqc/rpf_phase.csv") || (!-e $TMP."/mappingqc/pos_table_all
     ## NORMALIZED TRIPLET COUNTS FILE
     print "\tNormalized triplet counts";
     #Cat norm triplet count file
+    #Init hash
     my $total_norm_triplet = {};
+    foreach my $triplet (@$all_codons){
+        $total_norm_triplet->{$triplet} = 0;
+    }
     foreach my $chr (keys %chr_sizes){
         my $infile = $TMP."/mappingqc/triplet_phase_norm_".$chr.".csv";
         open(IN, "< ".$infile) or die $!;
@@ -730,11 +738,7 @@ if ((!-e $TMP."/mappingqc/rpf_phase.csv") || (!-e $TMP."/mappingqc/pos_table_all
             my @linesplit = split(',', $line);
             my $triplet = $linesplit[0];
             my $norm_count = $linesplit[1];
-            if(exists $total_norm_triplet->{$triplet}){
-                $total_norm_triplet->{$triplet} = $total_norm_triplet->{$triplet} + $norm_count;
-            } else {
-                $total_norm_triplet->{$triplet} = $norm_count;
-            }
+            $total_norm_triplet->{$triplet} = $total_norm_triplet->{$triplet} + $norm_count;
         }
         close(IN);
     }
@@ -2919,6 +2923,22 @@ sub dbh {
     my $dbh = DBI->connect($db,$us,$pw,{ RaiseError => 1 },) || die "Cannot connect: " . $DBI::errstr;
     
     return($dbh);
+}
+
+## Get all codons
+sub all_codons {
+    
+    my $bases = ['A','C','G','T'];
+    my $codons = [];
+    foreach my $i (@$bases){
+        foreach my $j (@$bases){
+            foreach my $k (@$bases){
+                push(@$codons, $i.$j.$k);
+            }
+        }
+    }
+    
+    return($codons);
 }
 
 ### Help text ###
