@@ -693,7 +693,7 @@ if ((!-e $TMP."/mappingqc/rpf_phase.csv") || (!-e $TMP."/mappingqc/pos_table_all
     #Init hash
     my $triplet_phase = {};
     foreach my $triplet (@$all_codons){
-        foreach my $phase ($all_phases){
+        foreach my $phase (@$all_phases){
             $triplet_phase->{$triplet}->{$phase} = 0;
         }
     }
