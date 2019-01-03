@@ -38,6 +38,8 @@ use Cwd;
 ##Command-line
 ##############
 
+#Test
+
 # nohup perl ./mQC.pl --experiment_name test --samfile untreat.sam --cores 20 --species mouse --ens_db ENS_mmu_86.db --ens_v 86 --offset plastid > nohup_mappingqc.txt &
 
 my($work_dir,$exp_name,$sam,$original_bam,$cores,$species,$version,$tmpfolder,$unique,$mapper,$maxmultimap,$ens_db,$offset_option,$offset_file,$cst_3prime_offset,$min_cst_3prime_offset,$max_cst_3prime_offset,$bam,$tool_dir,$plotrpftool,$min_length_plastid,$max_length_plastid,$min_length_gd,$max_length_gd,$outfolder,$outhtml,$outzip,$galaxy,$galaxysam,$galaxytest);
