@@ -38,7 +38,6 @@ use Cwd;
 ##Command-line
 ##############
 
-#Test
 
 # nohup perl ./mQC.pl --experiment_name test --samfile untreat.sam --cores 20 --species mouse --ens_db ENS_mmu_86.db --ens_v 86 --offset plastid > nohup_mappingqc.txt &
 
