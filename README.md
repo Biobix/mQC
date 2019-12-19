@@ -74,7 +74,7 @@ conda update readline
       - cst_3prime: use constant 3' offsets. This option seems beneficial for some Prokaryote species (Woolstenhulme et al. 2015)
         The constant distance to the 3' end should be given under the --cst_3prime_offset argument (default: 15).
         The minimum and maximum RPF length on which to apply this 3' offsets should be given as resp. --min_cst_3prime_offset and --max_cst_3prime_offset (default: resp. 22 and 40)
-      - from_file: use offsets from an input file
+        - from_file: use offsets from a (tab-separated) input file in which each line is in the format: RPFlength(tab)offset. 
         The offsets input file should be given in the —offset_file argument
   * min_length_gd: minimum RPF length used for gene distributions and metagenic classification (default: 26).
   * max_length_gd: maximum RPF length used for gene distributions and metagenic classification (default: 34).
