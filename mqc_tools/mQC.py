@@ -96,9 +96,9 @@ def main():
 
     # Catch command line with getopt
     try:
-        myopts, args = getopt.getopt(sys.argv[1:], "w:s:n:o:h:z:p:i:e:v:u:x:t:d:g:a:y:", ["work_dir=", "input_samfile=", \
+        myopts, args = getopt.getopt(sys.argv[1:], "w:s:n:o:h:z:p:i:e:v:u:x:t:d:g:a:y:c:", ["work_dir=", "input_samfile=", \
                         "exp_name=","outfolder=", "outhtml=", "outzip=", "plastid_option=", "plastid_img=" ,\
-                        "ensembl_db=", "ensembl_version=", "unique=", "plotrpftool=" , "tmp_folder=", "species=", "galaxy=","galaxysam=","galaxytest="])
+                        "ensembl_db=", "ensembl_version=", "unique=", "plotrpftool=" , "tmp_folder=", "species=", "galaxy=","galaxysam=","galaxytest=","comp_logo="])
     except getopt.GetoptError as err:
         print err
         sys.exit()
@@ -141,6 +141,8 @@ def main():
             galaxysam = a
         if o in ('-y', '--galaxytest'):
             galaxytest = a
+        if o in ('-c', '--comp_logo'):
+            comp_logo = a
 
     try:
         workdir
@@ -210,6 +212,10 @@ def main():
         galaxytest
     except:
         galaxytest = ''
+    try:
+        comp_logo
+    except:
+        comp_logo = ''
 
     # Check for correct arguments and parse
     if galaxy == '':
@@ -289,6 +295,8 @@ def main():
     if species == '':
         print "ERROR: do not forget to mention the species!"
         sys.exit()
+    if (comp_logo=='') or (comp_logo!='biobbix' and comp_logo!='ohmx'):
+        comp_logo = 'biobix'
 
     ########
     # MAIN #
@@ -298,9 +306,13 @@ def main():
     if not os.path.exists(outfolder):
         os.system("mkdir -p " + outfolder)
 
-    # Download biobix and mappingqc images
-    os.system("wget --quiet \"http://galaxy.ugent.be/static/BIOBIX_logo.png\"")
-    os.system("mv BIOBIX_logo.png " + outfolder)
+    # Download biobix/ohmx and mappingqc images
+    if comp_logo == 'biobix':
+        os.system("wget --quiet \"http://galaxy.ugent.be/static/BIOBIX_logo.png\"")
+        os.system("mv BIOBIX_logo.png "+outfolder)
+    elif comp_logo == 'ohmx':
+        os.system("wget --quiet \"https://raw.githubusercontent.com/Biobix/proteoformer/master/LogoBanner/ohmx_logo01_2.svg\"")
+        os.system("mv ohmx_logo01_2.svg "+outfolder)
     os.system("wget --no-check-certificate --quiet \"https://github.com/Biobix/mQC/raw/master/mqc_tools/logo_mqc2_whitebg.png\"")
     os.system("mv logo_mqc2_whitebg.png " + outfolder)
 
@@ -371,7 +383,7 @@ def main():
     os.system("cp "+tmp_metagenic_plot_nc+" "+outfolder)
     #Write output HTML file
     write_out_html(outhtml, outfolder, samfile, exp_name, tot_maps, plastid_option, offsets_file, offset_img,\
-                   ens_version, species, ens_db, unique, galaxytest)
+                   ens_version, species, ens_db, unique, galaxytest, comp_logo)
 
     ##Archive and collect output
     #Make output archive
@@ -400,7 +412,7 @@ def main():
 
 ## Write output html file
 def write_out_html(outfile, output_folder, samfile, run_name, totmaps, plastid, offsets_file, offsets_img,\
-                   ensembl_version, species, ens_db, unique, galaxytest):
+                   ensembl_version, species, ens_db, unique, galaxytest, comp_logo):
 
     #Load in offsets
     offsets = pd.read_csv(offsets_file, sep=',', header=None, names=["RPF", "offset"])
@@ -500,6 +512,26 @@ def write_out_html(outfile, output_folder, samfile, run_name, totmaps, plastid, 
             </div>
         </p>
         """
+        #Logo
+    if comp_logo=="biobix":
+        logo_header_string = """
+        #biobix_logo{
+            height:60%;
+            position: absolute;
+            right: 200px;
+            top: 30px;
+        }
+"""
+        logo_main_string = """<img src=\"BIOBIX_logo.png\" alt="biobix_logo" id="biobix_logo">"""
+    elif comp_logo=="ohmx":
+        logo_header_string = """
+        #ohmx_logo{
+            height:120%;
+            position: absolute;
+            right: 200px;
+            top: 2px;
+        }
+"""
 
     #Structure of html file
     html_string = """<!DOCTYPE html>
@@ -597,12 +629,7 @@ def write_out_html(outfile, output_folder, samfile, run_name, totmaps, plastid, 
             left: 20px;
             top: 30px;
         }
-        #biobix_logo{
-            height:60%;
-            position: absolute;
-            right: 200px;
-            top: 30px;
-        }
+"""+logo_header_string+"""
 
         a {
             color: inherit;
@@ -771,12 +798,7 @@ def write_out_html(outfile, output_folder, samfile, run_name, totmaps, plastid, 
            z-index: 4;
        }
 
-       #biobix_logo{
-           height:60%;
-           position: absolute;
-           right: 200px;
-           top: 30px;
-       }
+"""+logo_header_string+"""
 
        a {
            color: inherit;
@@ -868,7 +890,7 @@ def write_out_html(outfile, output_folder, samfile, run_name, totmaps, plastid, 
     <div id="header">
         <img src="logo_mqc2_whitebg.png" alt="mqc_logo" id="mqc_logo">
         <h1><span id="mappingqc">mappingQC</span><span id="run_name">"""+run_name+"""</span></h1>
-        <img src=\"BIOBIX_logo.png\" alt="biobix_logo" id="biobix_logo">
+        """+logo_main_string+"""
     </div>
 
     <nav id="navigator">

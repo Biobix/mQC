@@ -41,7 +41,7 @@ use Cwd;
 
 # nohup perl ./mQC.pl --experiment_name test --samfile untreat.sam --cores 20 --species mouse --ens_db ENS_mmu_86.db --ens_v 86 --offset plastid > nohup_mappingqc.txt &
 
-my($work_dir,$exp_name,$sam,$original_bam,$cores,$species,$version,$tmpfolder,$unique,$mapper,$maxmultimap,$ens_db,$offset_option,$offset_file,$cst_3prime_offset,$min_cst_3prime_offset,$max_cst_3prime_offset,$bam,$tool_dir,$plotrpftool,$min_length_plastid,$max_length_plastid,$min_length_gd,$max_length_gd,$outfolder,$outhtml,$outzip,$galaxy,$galaxysam,$galaxytest);
+my($work_dir,$exp_name,$sam,$original_bam,$cores,$species,$version,$tmpfolder,$unique,$mapper,$maxmultimap,$ens_db,$offset_option,$offset_file,$cst_3prime_offset,$min_cst_3prime_offset,$max_cst_3prime_offset,$bam,$tool_dir,$plotrpftool,$min_length_plastid,$max_length_plastid,$min_length_gd,$max_length_gd,$outfolder,$outhtml,$outzip,$galaxy,$galaxysam,$galaxytest,$comp_logo);
 my $help;
 
 
@@ -80,6 +80,7 @@ GetOptions(
 "galaxy:s" => \$galaxy,                     # Run through galaxy or not (Y/N)                                           Optional argument (default: N)
 "galaxysam:s" => \$galaxysam,               # Parameter needed for galaxy version                                       Optional argument (default: Y)
 "galaxytest:s" => \$galaxytest,             # Parameter needed for galaxy version (to run tests)                        Optional argument (default: N)
+"comp_logo:s" => \$comp_logo,
 "help" => \$help                            # Help text option
 );
 
@@ -314,6 +315,9 @@ if ($outzip){
 } else {
     $outzip = $work_dir."/mQC_".$exp_name.".zip";
     print "The output zip file is                                   : $outzip\n";
+}
+unless ($comp_logo) {
+    $comp_logo = 'biobix';
 }
 
 #Ensembl options
@@ -783,7 +787,7 @@ print "Run python plotting script\n";
 if ($ext eq "bam"){
     $sam = $original_bam;
 }
-my $python_command = "python ".$tool_dir."/mQC.py -g ".$galaxy." -a ".$galaxysam." -y ".$galaxytest." -t ".$TMP." -s ".$sam." -n ".$exp_name." -o ".$outfolder." -h ".$outhtml." -z ".$outzip." -p \"".$offset_option."\" -e ".$ens_db." -d ".$species." -v ".$version." -u ".$unique." -x ".$plotrpftool;
+my $python_command = "python ".$tool_dir."/mQC.py -g ".$galaxy." -a ".$galaxysam." -y ".$galaxytest." -t ".$TMP." -s ".$sam." -n ".$exp_name." -c ".$comp_logo." -o ".$outfolder." -h ".$outhtml." -z ".$outzip." -p \"".$offset_option."\" -e ".$ens_db." -d ".$species." -v ".$version." -u ".$unique." -x ".$plotrpftool;
 if ($offset_option eq "plastid"){
     my $offset_img = $TMP."/plastid/".$exp_name."_p_offsets.png";
     $python_command = $python_command." -i ".$offset_img;
