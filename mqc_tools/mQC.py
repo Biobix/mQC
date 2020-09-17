@@ -1649,6 +1649,10 @@ def get_plot_data(tmpfolder):
     total['1'] = 0
     total['2'] = 0
     triplet_data = defaultdict(lambda: defaultdict())
+    codontable = get_codontable()
+    for codon in codontable.keys():
+        for phase in [0,1,2]:
+            triplet_data[codon][phase] = 0
 
     #RPF phase distribution
     phase_distr_tmp_file = tmpfolder+"/mappingqc/rpf_phase.csv"
