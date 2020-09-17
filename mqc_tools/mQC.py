@@ -1165,6 +1165,9 @@ def read_norm_codon_count(input_file):
 
     #Init
     norm_codon_perc = defaultdict()
+    codontable = get_codontable()
+    for codon in codontable.keys():
+        norm_codon_perc[codon] = float(0)
     norm_counts = defaultdict()
     total_sum = float(0)
 
@@ -1187,6 +1190,9 @@ def read_codon_count(input_codon_count):
 
     #Init
     codon_perc = defaultdict()
+    codontable = get_codontable()
+    for codon in codontable.keys():
+        codon_perc[codon] = float(0)
     counts=defaultdict(lambda: defaultdict())
     counts_per_triplet = defaultdict()
     total_sum=0
