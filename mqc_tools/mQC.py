@@ -513,6 +513,7 @@ def write_out_html(outfile, output_folder, samfile, run_name, totmaps, plastid, 
         </p>
         """
         #Logo
+    foot_text = "BioBix lab Ghent (Belgium)"
     if comp_logo=="biobix":
         logo_header_string = """
         #biobix_logo{
@@ -524,6 +525,7 @@ def write_out_html(outfile, output_folder, samfile, run_name, totmaps, plastid, 
 """
         logo_main_string = """<img src=\"BIOBIX_logo.png\" alt="biobix_logo" id="biobix_logo">"""
     elif comp_logo=="ohmx":
+        foot_text = "OHMX.bio, Ghent (Belgium)"
         logo_header_string = """
         #ohmx_logo{
             height:120%;
@@ -1016,7 +1018,7 @@ def write_out_html(outfile, output_folder, samfile, run_name, totmaps, plastid, 
     </div>
 
     <div id="footer">
-        <p id="footer_content">Generated with mQC - BioBix lab Ghent (Belgium) - Steven Verbruggen</p>
+        <p id="footer_content">Generated with mQC - """+foot_text+"""- Steven Verbruggen</p>
     </div>
 
 </body>
